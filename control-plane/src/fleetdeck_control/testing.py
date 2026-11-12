@@ -160,6 +160,7 @@ async def context(database_url: str) -> AsyncIterator[AppContext]:
         idle_seconds=60,
         internal_token="internal-test-token",
         bundles_dir=Path(__file__).parents[3] / "bundles",
+        seed_dir=Path(__file__).parents[3] / "seed",
     )
     cluster = FakeAgentCluster()
     ctx = build_context(

@@ -105,4 +105,36 @@ def tools(deps: Deps, api: FleetApi) -> list[Tool]:
             )
         return result
 
-    return [list_colleagues, my_cases, send_request, inbox, get_request, reply]
+    @safe
+    async def propose_skill(name: str, description: str, body: str, share: bool = False) -> Result:
+        """Propose a procedure to keep as a skill. It only takes effect after a person approves.
+
+        A personal skill is approved by my person. A skill for the shared library is reviewed by
+        an administrator.
+
+        Args:
+            name: Lower-case words joined by hyphens, for example payer-call-notes.
+            description: One line saying when the skill applies.
+            body: The procedure, as numbered steps.
+            share: True to propose it for colleagues with the same role.
+
+        """
+        await deps.allow("propose_skill", record=name)
+        result = dict(
+            await api.fleet(
+                "propose-skill",
+                deps.token(),
+                name=name,
+                description=description,
+                body=body,
+                share=share,
+            )
+        )
+        result["message"] = "Proposed. It is not active: " + (
+            "an administrator reviews shared skills."
+            if share
+            else "your person approves it on their skills page."
+        )
+        return result
+
+    return [list_colleagues, my_cases, send_request, inbox, get_request, reply, propose_skill]

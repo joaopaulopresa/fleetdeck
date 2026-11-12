@@ -140,6 +140,15 @@ class FleetReplyIn(FleetRequestIn):
     body: str
 
 
+class FleetSkillIn(FleetIn):
+    """A procedure the agent wants to keep."""
+
+    name: str
+    description: str
+    body: str
+    share: bool = False
+
+
 class RaiseDataClassIn(BaseModel):
     """A connector returned data of this class into the agent's current session."""
 
@@ -277,6 +286,21 @@ async def fleet_send(body: FleetSendIn, context: Context) -> dict[str, Any]:
         body=body.body,
     )
     return _request_view(request)
+
+
+@router.post("/fleet/propose-skill")
+async def fleet_propose_skill(body: FleetSkillIn, context: Context) -> dict[str, Any]:
+    """Record a skill the agent proposes. It does nothing until a person approves it."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, "connector")
+    skill = await context.skills.propose(
+        caller.agent,
+        name=body.name,
+        description=body.description,
+        body=body.body,
+        share=body.share,
+    )
+    return {"skill_id": skill.id, "status": skill.status, "scope": skill.scope}
 
 
 @router.post("/fleet/inbox")

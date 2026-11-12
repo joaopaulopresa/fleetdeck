@@ -74,3 +74,4 @@
     inbox: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
     get_request: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
     reply: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    propose_skill: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}

@@ -9,12 +9,14 @@ from fleetdeck_control.agents.reaper import IdleReaper
 from fleetdeck_control.agents.service import AgentService
 from fleetdeck_control.approvals import ApprovalService, DraftConfirmer, HttpDraftConfirmer
 from fleetdeck_control.broker import Broker
+from fleetdeck_control.capacity import PrometheusClient
 from fleetdeck_control.cluster import AgentCluster, FakeAgentCluster, KubernetesAgentCluster
 from fleetdeck_control.db import Database
 from fleetdeck_control.hermes import HermesClient, HttpHermesClient
 from fleetdeck_control.runs import RunService
 from fleetdeck_control.scheduler import Scheduler
 from fleetdeck_control.settings import Settings
+from fleetdeck_control.skills import SkillService
 
 
 @dataclass
@@ -32,6 +34,8 @@ class AppContext:
     approvals: ApprovalService
     broker: Broker
     scheduler: Scheduler
+    skills: SkillService
+    prometheus: PrometheusClient
 
 
 def build_context(
@@ -74,6 +78,8 @@ def build_context(
         approvals=approvals,
         broker=broker,
         scheduler=scheduler,
+        skills=SkillService(db, cluster, settings.bundles_dir),
+        prometheus=PrometheusClient(settings.prometheus_url),
     )
 
 

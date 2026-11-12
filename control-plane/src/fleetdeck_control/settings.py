@@ -25,6 +25,14 @@ class Settings(CommonSettings):
     run_timeout_seconds: int = 600
     scheduler_interval_seconds: int = 10
     background_tasks: bool = True
+    seed_dir: Path = Path("/app/seed")
+    company_name: str = "Meridian Health Group"
+    grafana_url: str = ""
+    prometheus_url: str = ""
+    default_model: str = ""
+    restricted_model: str = ""
+    #: Memory an awake agent is assumed to use when no pod is awake to measure.
+    agent_memory_bytes: int = 320 * 1024 * 1024
     #: Role bundles; a new agent gets its bundle's schedules.
     bundles_dir: Path = Path("/app/bundles")
     web_origin: str = ""

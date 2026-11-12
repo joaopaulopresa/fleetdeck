@@ -10,7 +10,7 @@ from fleetdeck_control import metrics
 from fleetdeck_control.agents.activator import Activator
 from fleetdeck_control.agents.service import AgentService
 from fleetdeck_control.db import Database
-from fleetdeck_control.models import Agent
+from fleetdeck_control.models import Agent, Setting
 from fleetdeck_control.settings import Settings
 
 log = logging.getLogger(__name__)
@@ -27,10 +27,18 @@ class IdleReaper:
         self._agents = agents
         self._settings = settings
 
+    async def idle_seconds(self) -> int:
+        """Return the idle limit: the administrators' runtime setting, else the configured one."""
+        async with self._db.session() as session:
+            row = await session.get(Setting, "fleet")
+        if row is not None and "idle_seconds" in row.value:
+            return int(row.value["idle_seconds"])
+        return self._settings.idle_seconds
+
     async def reap_once(self, now: datetime | None = None) -> list[str]:
         """Sleep every active agent idle for longer than the limit; return their ids."""
         now = now or datetime.now(UTC)
-        cutoff = now - timedelta(seconds=self._settings.idle_seconds)
+        cutoff = now - timedelta(seconds=await self.idle_seconds())
         async with self._db.session() as session:
             idle = (
                 await session.scalars(
