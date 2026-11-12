@@ -25,6 +25,8 @@ class Settings(CommonSettings):
     scheduler_interval_seconds: int = 10
     background_tasks: bool = True
     web_origin: str = ""
+    #: Base URL of the corporate systems, used to confirm or discard drafts.
+    systems_url: str = "http://mock-systems:8000"
     #: Prefix of a Langfuse trace link; the trace id is appended. Empty when tracing is off.
     langfuse_trace_url: str = ""
 

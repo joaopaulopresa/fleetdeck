@@ -11,7 +11,7 @@ from fleetdeck_common import errors
 from fleetdeck_common.logs import configure_logging
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
-from fleetdeck_control.api import agents, audit, auth, chat, internal
+from fleetdeck_control.api import agents, audit, auth, cases, chat, internal
 from fleetdeck_control.context import AppContext, build_context
 from fleetdeck_control.settings import Settings, get_settings
 
@@ -75,6 +75,7 @@ def create_app(settings: Settings | None = None, context: AppContext | None = No
     app.include_router(auth.router)
     app.include_router(agents.router)
     app.include_router(audit.router)
+    app.include_router(cases.router)
     app.include_router(chat.router)
     app.include_router(internal.router)
     return app

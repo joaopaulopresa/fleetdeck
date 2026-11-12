@@ -7,6 +7,7 @@ from fastapi import Request
 from fleetdeck_control.agents.activator import Activator
 from fleetdeck_control.agents.reaper import IdleReaper
 from fleetdeck_control.agents.service import AgentService
+from fleetdeck_control.approvals import ApprovalService, DraftConfirmer, HttpDraftConfirmer
 from fleetdeck_control.cluster import AgentCluster, FakeAgentCluster, KubernetesAgentCluster
 from fleetdeck_control.db import Database
 from fleetdeck_control.hermes import HermesClient, HttpHermesClient
@@ -26,6 +27,7 @@ class AppContext:
     activator: Activator
     reaper: IdleReaper
     runs: RunService
+    approvals: ApprovalService
 
 
 def build_context(
@@ -33,6 +35,7 @@ def build_context(
     *,
     cluster: AgentCluster | None = None,
     hermes: HermesClient | None = None,
+    confirmer: DraftConfirmer | None = None,
 ) -> AppContext:
     """Wire the services together. Tests pass fakes for ``cluster`` and ``hermes``."""
     db = Database(settings.database_url)
@@ -49,6 +52,9 @@ def build_context(
     activator = Activator(db, cluster, hermes, agents, settings)
     reaper = IdleReaper(db, activator, agents, settings)
     runs = RunService(db, activator, hermes, cluster, settings)
+    approvals = ApprovalService(
+        db, confirmer or HttpDraftConfirmer(settings.systems_url, settings.internal_token)
+    )
     return AppContext(
         settings=settings,
         db=db,
@@ -58,6 +64,7 @@ def build_context(
         activator=activator,
         reaper=reaper,
         runs=runs,
+        approvals=approvals,
     )
 
 
