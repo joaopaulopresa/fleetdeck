@@ -402,10 +402,14 @@ async def test_people_manage_only_their_own_schedules(
     bad = await client.post("/api/me/schedules", json={**job, "cron": "every day"}, headers=tom)
     assert bad.status_code == 422
     created = (await client.post("/api/me/schedules", json=job, headers=tom)).json()
-    assert [s["id"] for s in (await client.get("/api/me/schedules", headers=tom)).json()] == [
-        created["id"]
-    ]
-    assert (await client.get("/api/me/schedules", headers=marcus)).json() == []
+    mine = {s["name"]: s["id"] for s in (await client.get("/api/me/schedules", headers=tom)).json()}
+    # His own job, next to the one his role bundle gave the agent when it was provisioned.
+    assert mine == {
+        "Daily denials": created["id"],
+        "Month-end exceptions": mine["Month-end exceptions"],
+    }
+    others = (await client.get("/api/me/schedules", headers=marcus)).json()
+    assert [s["name"] for s in others] == ["Morning denial check"]
     url = f"/api/me/schedules/{created['id']}"
     assert (await client.patch(url, json={"enabled": False}, headers=marcus)).status_code == 404
     assert (await client.post(f"{url}/run", headers=marcus)).status_code == 404

@@ -306,10 +306,16 @@ def deadline_rules() -> list[Record]:
 
 
 @docket.get("/deadline")
-def deadline(rule: str, event_date: date) -> Record:
-    """Compute a due date from a rule and an event date."""
+def deadline(rule: str, event_date: str, store: Data) -> Record:
+    """Compute a due date from a rule and an event date (``YYYY-MM-DD`` or ``today``)."""
     try:
-        return rules.compute_deadline(rule, event_date)
+        event = store.today() if event_date == "today" else date.fromisoformat(event_date)
+    except ValueError as exc:
+        raise errors.ConflictError(
+            f"event_date must be YYYY-MM-DD or today: {event_date!r}"
+        ) from exc
+    try:
+        return rules.compute_deadline(rule, event)
     except KeyError as exc:
         raise errors.NotFoundError(f"unknown deadline rule {rule!r}") from exc
 
