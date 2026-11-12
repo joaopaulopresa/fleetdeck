@@ -1,0 +1,150 @@
+{{- define "fleetdeck.controlPlaneEnv" -}}
+{{ include "fleetdeck.commonEnv" . }}
+- name: POSTGRES_PASSWORD
+  valueFrom:
+    secretKeyRef: {name: fleet-secrets, key: postgres-password}
+- name: FLEET_DATABASE_URL
+  value: postgresql+asyncpg://fleet:$(POSTGRES_PASSWORD)@postgres:5432/fleet
+- name: FLEET_SESSION_SECRET
+  valueFrom:
+    secretKeyRef: {name: fleet-secrets, key: session-secret}
+- name: FLEET_IDLE_SECONDS
+  value: {{ .Values.agents.idleSeconds | quote }}
+- name: FLEET_WAKE_TIMEOUT_SECONDS
+  value: {{ .Values.agents.wakeTimeoutSeconds | quote }}
+{{- end }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: control-plane
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+---
+# The control plane may write Agent resources and nothing else in the cluster...
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fleetdeck-control-plane
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [fleetdeck.dev]
+    resources: [agents]
+    verbs: [get, list, watch, create, patch, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fleetdeck-control-plane
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: fleetdeck-control-plane}
+subjects:
+  - {kind: ServiceAccount, name: control-plane, namespace: {{ .Release.Namespace }}}
+---
+# ...and the agents' keys, which live in their own namespace.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: agent-keys-writer
+  namespace: {{ .Values.keysNamespace }}
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [get, create, update, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: agent-keys-writer
+  namespace: {{ .Values.keysNamespace }}
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: agent-keys-writer}
+subjects:
+  - {kind: ServiceAccount, name: control-plane, namespace: {{ .Release.Namespace }}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: control-plane
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: control-plane}
+  ports: [{port: 8000}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control-plane
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  # One replica: the activator's per-agent locks and the reaper live in this process.
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: control-plane}
+  template:
+    metadata:
+      labels:
+        app: control-plane
+        fleetdeck.dev/db-client: "true"
+        fleetdeck.dev/calls-agents: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+    spec:
+      serviceAccountName: control-plane
+      securityContext: {{- include "fleetdeck.podSecurity" . | nindent 8 }}
+      volumes: [{name: tmp, emptyDir: {}}]
+      initContainers:
+        - name: migrate
+          image: {{ .Values.image.platform }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [fleetdeck-control, migrate]
+          securityContext: {{- include "fleetdeck.containerSecurity" . | nindent 12 }}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+          env: {{- include "fleetdeck.controlPlaneEnv" . | nindent 12 }}
+      containers:
+        - name: control-plane
+          image: {{ .Values.image.platform }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [fleetdeck-control, serve]
+          securityContext: {{- include "fleetdeck.containerSecurity" . | nindent 12 }}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+          env: {{- include "fleetdeck.controlPlaneEnv" . | nindent 12 }}
+          ports: [{containerPort: 8000}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: 8000}
+            periodSeconds: 2
+          resources:
+            requests: {cpu: 100m, memory: 192Mi}
+---
+{{- if .Values.seed.enabled }}
+# Loads the synthetic company and provisions its agents after every install and upgrade.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: seed
+        fleetdeck.dev/db-client: "true"
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: control-plane
+      securityContext: {{- include "fleetdeck.podSecurity" . | nindent 8 }}
+      volumes: [{name: tmp, emptyDir: {}}]
+      containers:
+        - name: seed
+          image: {{ .Values.image.platform }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [fleetdeck-control, seed, --path, /app/seed]
+          securityContext: {{- include "fleetdeck.containerSecurity" . | nindent 12 }}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+          env: {{- include "fleetdeck.controlPlaneEnv" . | nindent 12 }}
+{{- end }}

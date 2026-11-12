@@ -1,0 +1,6 @@
+apiVersion: v2
+name: fleetdeck
+description: One isolated, scale-to-zero AI agent per employee, with shared access-controlled services
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

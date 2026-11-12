@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: operator
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+---
+# The operator is the only component that creates workloads.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fleetdeck-operator
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [fleetdeck.dev]
+    resources: [agents, agents/status]
+    verbs: [get, list, watch, patch, update]
+  - apiGroups: [apiextensions.k8s.io]
+    resources: [customresourcedefinitions]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [namespaces, serviceaccounts, services, configmaps, secrets, persistentvolumeclaims]
+    verbs: [get, list, watch, create, patch, update, delete]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [get, list, watch, create, patch, update, delete]
+  - apiGroups: [networking.k8s.io]
+    resources: [networkpolicies]
+    verbs: [get, list, watch, create, patch, update, delete]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fleetdeck-operator
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: fleetdeck-operator}
+subjects:
+  - {kind: ServiceAccount, name: operator, namespace: {{ .Release.Namespace }}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operator
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: operator}
+  template:
+    metadata:
+      labels: {app: operator}
+    spec:
+      serviceAccountName: operator
+      securityContext: {{- include "fleetdeck.podSecurity" . | nindent 8 }}
+      volumes: [{name: tmp, emptyDir: {}}]
+      containers:
+        - name: operator
+          image: {{ .Values.image.platform }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - kopf
+            - run
+            - --standalone
+            - --all-namespaces
+            - --liveness=http://0.0.0.0:8080/healthz
+            - -m
+            - fleetdeck_operator.handlers
+          securityContext: {{- include "fleetdeck.containerSecurity" . | nindent 12 }}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+          env:
+            {{- include "fleetdeck.commonEnv" . | nindent 12 }}
+            - {name: FLEET_HERMES_IMAGE, value: {{ .Values.image.hermes | quote }}}
+            - name: FLEET_GATEWAY_URL
+              value: http://model-gateway.{{ .Release.Namespace }}.svc.cluster.local:4000
+            - name: FLEET_CONNECTOR_URL_TEMPLATE
+              value: http://connector-{name}.{{ .Release.Namespace }}.svc.cluster.local:8000/mcp
+            - {name: FLEET_STATE_STORAGE, value: {{ .Values.agents.stateStorage | quote }}}
+            - {name: FLEET_CPU_REQUEST, value: {{ .Values.agents.cpuRequest | quote }}}
+            - {name: FLEET_MEMORY_REQUEST, value: {{ .Values.agents.memoryRequest | quote }}}
+            - {name: FLEET_MEMORY_LIMIT, value: {{ .Values.agents.memoryLimit | quote }}}
+          livenessProbe:
+            httpGet: {path: /healthz, port: 8080}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
