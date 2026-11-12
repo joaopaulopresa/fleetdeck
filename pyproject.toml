@@ -6,6 +6,7 @@ requires-python = ">=3.13"
 dependencies = [
     "fleetdeck-common",
     "fleetdeck-control",
+    "fleetdeck-egress",
     "fleetdeck-gateway",
     "fleetdeck-operator",
 ]
@@ -14,11 +15,12 @@ dependencies = [
 package = false
 
 [tool.uv.workspace]
-members = ["common", "control-plane", "operator", "model-gateway"]
+members = ["common", "control-plane", "operator", "model-gateway", "egress-proxy"]
 
 [tool.uv.sources]
 fleetdeck-common = { workspace = true }
 fleetdeck-control = { workspace = true }
+fleetdeck-egress = { workspace = true }
 fleetdeck-gateway = { workspace = true }
 fleetdeck-operator = { workspace = true }
 
@@ -49,7 +51,13 @@ ignore = ["D203", "D213", "D105", "D107", "S101"]
 strict = true
 python_version = "3.13"
 plugins = ["pydantic.mypy"]
-mypy_path = ["common/src", "control-plane/src", "operator/src", "model-gateway/src"]
+mypy_path = [
+    "common/src",
+    "control-plane/src",
+    "operator/src",
+    "model-gateway/src",
+    "egress-proxy/src",
+]
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
