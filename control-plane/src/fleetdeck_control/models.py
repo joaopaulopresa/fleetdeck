@@ -344,3 +344,38 @@ class Schedule(Base):
     next_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
     last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_run_id: Mapped[str | None] = mapped_column(String(40))
+
+
+class Setting(Base):
+    """A runtime setting administrators can change without redeploying."""
+
+    __tablename__ = "settings"
+
+    key: Mapped[str] = mapped_column(String(60), primary_key=True)
+    value: Mapped[dict[str, Any]] = mapped_column(JSONB)
+
+
+class SkillProposal(Base):
+    """A procedure an agent proposes to keep, personal or for the shared library.
+
+    Nothing an agent writes becomes a skill by itself. A personal skill needs its person's
+    approval; a shared skill needs an administrator's review.
+    """
+
+    __tablename__ = "skills"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    name: Mapped[str] = mapped_column(String(50))
+    description: Mapped[str] = mapped_column(String(300))
+    body: Mapped[str] = mapped_column(Text)
+    #: personal | shared
+    scope: Mapped[str] = mapped_column(String(10))
+    owner_person_id: Mapped[str | None] = mapped_column(String(40), index=True)
+    proposed_by_agent: Mapped[str] = mapped_column(String(40))
+    #: For shared skills: the roles whose agents receive it.
+    roles: Mapped[list[str]] = mapped_column(ARRAY(String(40)), default=list)
+    #: proposed | approved | rejected
+    status: Mapped[str] = mapped_column(String(10), default="proposed", index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    decided_by: Mapped[str | None] = mapped_column(String(40))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

@@ -35,7 +35,13 @@ class NewAgent:
     tier: str = "strict"
 
 
-def spec_for(agent: Agent, person: Person | None, *, awake: bool) -> AgentSpec:
+def spec_for(
+    agent: Agent,
+    person: Person | None,
+    *,
+    awake: bool,
+    extra_skills: list[dict[str, str]] | None = None,
+) -> AgentSpec:
     """Build the cluster spec for a stored agent."""
     return AgentSpec(
         agent_id=agent.id,
@@ -48,6 +54,11 @@ def spec_for(agent: Agent, person: Person | None, *, awake: bool) -> AgentSpec:
         tier=agent.tier,
         awake=awake and not agent.suspended,
         suspended=agent.suspended,
+        extra_skills=(
+            None
+            if extra_skills is None
+            else tuple((s["name"], s["description"], s["body"]) for s in extra_skills)
+        ),
     )
 
 

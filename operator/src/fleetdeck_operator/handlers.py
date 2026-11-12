@@ -95,6 +95,10 @@ def reconcile(name: str, uid: str, spec: kopf.Spec, patch: kopf.Patch, **_: Any)
         awake=bool(spec.get("awake", False)),
         suspended=bool(spec.get("suspended", False)),
         keys=keys,
+        extra_skills=tuple(
+            (str(s["name"]), str(s.get("description", "")), str(s.get("body", "")))
+            for s in spec.get("extraSkills") or []
+        ),
     )
     manifests = render_agent(agent, bundle, settings)
     for manifest in manifests:

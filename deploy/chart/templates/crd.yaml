@@ -46,6 +46,16 @@ spec:
                 keysSecret:
                   type: string
                   description: Secret in the system namespace holding the agent's keys.
+                extraSkills:
+                  type: array
+                  description: Approved personal and shared skills, added to the role bundle's.
+                  items:
+                    type: object
+                    required: [name, description, body]
+                    properties:
+                      name: {type: string}
+                      description: {type: string}
+                      body: {type: string}
             status:
               type: object
               x-kubernetes-preserve-unknown-fields: true

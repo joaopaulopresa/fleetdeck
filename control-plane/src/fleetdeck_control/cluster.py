@@ -33,6 +33,9 @@ class AgentSpec:
     tier: str = "strict"
     awake: bool = False
     suspended: bool = False
+    #: Approved personal and shared skills (name, description, body), mounted next to the role
+    #: bundle's skills. ``None`` leaves what the agent already has untouched.
+    extra_skills: tuple[tuple[str, str, str], ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -79,6 +82,16 @@ class AgentCluster(Protocol):
 
 
 def _body(spec: AgentSpec) -> dict[str, Any]:
+    body = _base_body(spec)
+    if spec.extra_skills is not None:
+        body["spec"]["extraSkills"] = [
+            {"name": name, "description": description, "body": text}
+            for name, description, text in spec.extra_skills
+        ]
+    return body
+
+
+def _base_body(spec: AgentSpec) -> dict[str, Any]:
     return {
         "apiVersion": f"{GROUP}/{VERSION}",
         "kind": "Agent",
@@ -217,7 +230,10 @@ class FakeAgentCluster:
         self.keys: dict[str, AgentKeys] = {}
 
     async def apply(self, spec: AgentSpec) -> None:
-        """Remember the spec."""
+        """Remember the spec, keeping the previous skills when the new spec does not set any."""
+        previous = self.specs.get(spec.agent_id)
+        if spec.extra_skills is None and previous is not None:
+            spec = AgentSpec(**{**asdict(spec), "extra_skills": previous.extra_skills})
         self.specs[spec.agent_id] = spec
 
     async def delete(self, agent_id: str) -> None:

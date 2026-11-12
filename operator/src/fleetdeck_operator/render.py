@@ -30,6 +30,8 @@ class AgentInput:
     suspended: bool
     #: ``FLEET_MODEL_KEY``, ``FLEET_CONNECTOR_TOKEN`` and ``API_SERVER_KEY`` for the pod.
     keys: dict[str, str]
+    #: Approved personal and shared skills from the Agent resource: name, description, body.
+    extra_skills: tuple[tuple[str, str, str], ...] = ()
 
 
 def connector_server_name(connector: str) -> str:
@@ -93,6 +95,9 @@ def _bundle_files(agent: AgentInput, bundle: Bundle, settings: OperatorSettings)
     }
     for skill in bundle.skills:
         files[f"skill.{skill.name}"] = skill_document(skill.name, skill.description, skill.body)
+    for name, description, body in agent.extra_skills:
+        # A role bundle's skill wins over an approved skill of the same name.
+        files.setdefault(f"skill.{name}", skill_document(name, description, body))
     return files
 
 

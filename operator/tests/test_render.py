@@ -183,3 +183,17 @@ def test_every_shipped_bundle_loads_and_renders() -> None:
     assert {b.name for b in bundles} == {"physician", "biller", "lawyer", "tax-analyst", "director"}
     for bundle in bundles:
         assert render_agent(agent(), bundle, SETTINGS)
+
+
+def test_approved_skills_are_mounted_but_never_replace_a_bundle_skill() -> None:
+    extra = (
+        ("payer-call-notes", "How to log a payer call", "1. Note the reference."),
+        ("appeal-letter", "A different appeal procedure", "Do something else."),
+    )
+    manifests = render_agent(agent(extra_skills=extra), BUNDLE, SETTINGS)
+    data = by_kind(manifests, "ConfigMap")["data"]
+    assert "1. Note the reference." in data["skill.payer-call-notes"]
+    assert "1. Read." in data["skill.appeal-letter"]  # the bundle's own text
+    pod = by_kind(manifests, "Deployment")["spec"]["template"]["spec"]
+    items = next(v for v in pod["volumes"] if v["name"] == "bundle")["configMap"]["items"]
+    assert {"key": "skill.payer-call-notes", "path": "skills/payer-call-notes/SKILL.md"} in items
