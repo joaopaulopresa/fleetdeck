@@ -9,6 +9,7 @@ COPY control-plane control-plane
 COPY operator operator
 COPY model-gateway model-gateway
 COPY egress-proxy egress-proxy
+COPY mock-systems mock-systems
 RUN uv sync --frozen --no-dev --no-editable
 
 FROM python:3.13-slim

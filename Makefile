@@ -50,7 +50,7 @@ lint: ## Ruff and Helm lint
 	helm lint deploy/chart
 
 typecheck: ## mypy --strict
-	uv run mypy common/src control-plane/src operator/src model-gateway/src egress-proxy/src
+	uv run mypy common/src control-plane/src operator/src model-gateway/src egress-proxy/src mock-systems/src
 
 test: ## Unit and API tests (need Docker for a throwaway PostgreSQL, no cluster, no model key)
 	uv run pytest
