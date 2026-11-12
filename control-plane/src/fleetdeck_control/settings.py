@@ -1,6 +1,7 @@
 """Typed settings of the control plane."""
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from fleetdeck_common.settings import CommonSettings
@@ -24,6 +25,8 @@ class Settings(CommonSettings):
     run_timeout_seconds: int = 600
     scheduler_interval_seconds: int = 10
     background_tasks: bool = True
+    #: Role bundles; a new agent gets its bundle's schedules.
+    bundles_dir: Path = Path("/app/bundles")
     web_origin: str = ""
     #: Password of the row-level-security login used by the knowledge connector.
     connector_db_password: str = ""

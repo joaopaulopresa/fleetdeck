@@ -1,8 +1,13 @@
 """Provisioning and lifecycle of agents."""
 
 import logging
+import uuid
 from dataclasses import dataclass
+from datetime import UTC, datetime
+from pathlib import Path
 
+from croniter import croniter
+from fleetdeck_common.bundles import load_bundle
 from fleetdeck_common.errors import ConflictError, NotFoundError
 from fleetdeck_common.naming import validate_agent_id
 from fleetdeck_common.tokens import hash_token, new_token
@@ -12,7 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fleetdeck_control import audit, metrics
 from fleetdeck_control.cluster import AgentCluster, AgentKeys, AgentSpec
 from fleetdeck_control.db import Database
-from fleetdeck_control.models import Agent, Person
+from fleetdeck_control.models import Agent, Person, Schedule
 
 log = logging.getLogger(__name__)
 
@@ -49,9 +54,10 @@ def spec_for(agent: Agent, person: Person | None, *, awake: bool) -> AgentSpec:
 class AgentService:
     """Creates, suspends, resumes and deletes agents."""
 
-    def __init__(self, db: Database, cluster: AgentCluster) -> None:
+    def __init__(self, db: Database, cluster: AgentCluster, bundles_dir: Path) -> None:
         self._db = db
         self._cluster = cluster
+        self._bundles_dir = bundles_dir
 
     async def get(self, session: AsyncSession, agent_id: str) -> Agent:
         """Return the agent or raise :class:`NotFoundError`."""
@@ -63,6 +69,7 @@ class AgentService:
     async def create(self, new: NewAgent, *, actor: str | None = None) -> Agent:
         """Provision an agent: keys, database row, custom resource. It starts asleep."""
         validate_agent_id(new.agent_id)
+        bundle = load_bundle(self._bundles_dir, new.bundle)
         keys = AgentKeys(
             model_key=new_token("fdm"),
             connector_token=new_token("fdc"),
@@ -91,6 +98,19 @@ class AgentService:
                 connector_token_hash=hash_token(keys.connector_token),
             )
             session.add(agent)
+            await session.flush()
+            now = datetime.now(UTC)
+            for job in bundle.schedules:
+                session.add(
+                    Schedule(
+                        id=f"sch_{uuid.uuid4().hex[:24]}",
+                        agent_id=agent.id,
+                        name=job.name,
+                        cron=job.cron,
+                        prompt=job.prompt,
+                        next_run_at=croniter(job.cron, now).get_next(datetime),
+                    )
+                )
             await audit.record(
                 session,
                 kind="agent",
