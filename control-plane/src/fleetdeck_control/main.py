@@ -11,7 +11,7 @@ from fleetdeck_common import errors
 from fleetdeck_common.logs import configure_logging
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
-from fleetdeck_control.api import agents, auth
+from fleetdeck_control.api import agents, auth, chat, internal
 from fleetdeck_control.context import AppContext, build_context
 from fleetdeck_control.settings import Settings, get_settings
 
@@ -46,6 +46,7 @@ def create_app(settings: Settings | None = None, context: AppContext | None = No
             for task in tasks:
                 task.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
+            await ctx.runs.shutdown()
             if context is None:
                 await ctx.db.dispose()
 
@@ -73,4 +74,6 @@ def create_app(settings: Settings | None = None, context: AppContext | None = No
 
     app.include_router(auth.router)
     app.include_router(agents.router)
+    app.include_router(chat.router)
+    app.include_router(internal.router)
     return app

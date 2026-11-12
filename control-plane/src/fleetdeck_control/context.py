@@ -10,6 +10,7 @@ from fleetdeck_control.agents.service import AgentService
 from fleetdeck_control.cluster import AgentCluster, FakeAgentCluster, KubernetesAgentCluster
 from fleetdeck_control.db import Database
 from fleetdeck_control.hermes import HermesClient, HttpHermesClient
+from fleetdeck_control.runs import RunService
 from fleetdeck_control.settings import Settings
 
 
@@ -24,6 +25,7 @@ class AppContext:
     agents: AgentService
     activator: Activator
     reaper: IdleReaper
+    runs: RunService
 
 
 def build_context(
@@ -46,6 +48,7 @@ def build_context(
     agents = AgentService(db, cluster)
     activator = Activator(db, cluster, hermes, agents, settings)
     reaper = IdleReaper(db, activator, agents, settings)
+    runs = RunService(db, activator, hermes, cluster, settings)
     return AppContext(
         settings=settings,
         db=db,
@@ -54,6 +57,7 @@ def build_context(
         agents=agents,
         activator=activator,
         reaper=reaper,
+        runs=runs,
     )
 
 

@@ -29,3 +29,4 @@ class RunContext(BaseModel):
     case_id: str | None = None
     data_class: str = "general"
     trigger: str | None = None
+    trace_id: str | None = None
