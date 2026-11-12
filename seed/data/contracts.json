@@ -1,0 +1,268 @@
+{
+ "contracts": [
+  {
+   "id": "CTR-NORTHWIND-2025",
+   "kind": "payer",
+   "counterparty": "Northwind Mutual Insurance",
+   "title": "Provider Participation Agreement",
+   "effective": "2025-01-01",
+   "clauses": [
+    {
+     "id": "5.2",
+     "title": "Medical necessity",
+     "text": "A Covered Service is medically necessary when it is consistent with generally accepted standards of medical practice, including the current guidelines of the relevant specialty society, and is clinically appropriate for the Member's condition. Payer shall apply the published guideline criteria in effect on the date of service."
+    },
+    {
+     "id": "7.3",
+     "title": "First-level appeal",
+     "text": "Provider may appeal a denied claim in writing within sixty (60) calendar days of the date of the denial notice. The appeal shall state the grounds and include the supporting clinical documentation. Payer shall decide within thirty (30) calendar days of receipt."
+    },
+    {
+     "id": "7.4",
+     "title": "Second-level appeal",
+     "text": "If the first-level appeal is denied, Provider may request a second-level review by a physician of the same specialty within thirty (30) calendar days of the first-level decision."
+    },
+    {
+     "id": "12.1",
+     "title": "Good-faith resolution",
+     "text": "The parties shall attempt in good faith to resolve any dispute arising under this Agreement through the appeal procedures of Article 7 before invoking this Article."
+    },
+    {
+     "id": "12.2",
+     "title": "Notice of dispute",
+     "text": "A party that considers a final denial to breach this Agreement shall deliver a written notice of dispute to the other party within thirty (30) calendar days of the final denial. The notice shall identify the claim, the amount in dispute, the clause relied upon and the remedy sought."
+    },
+    {
+     "id": "12.3",
+     "title": "Response to notice",
+     "text": "The party receiving a notice of dispute shall respond in writing within forty-five (45) calendar days of receipt. Failure to respond within that period is deemed a rejection."
+    },
+    {
+     "id": "12.4",
+     "title": "Arbitration",
+     "text": "If the dispute is not resolved, either party may demand binding arbitration within twenty (20) business days after the response period ends. The arbitration is seated in Columbus, Ohio, before a single arbitrator."
+    },
+    {
+     "id": "12.6",
+     "title": "Interest on wrongly denied claims",
+     "text": "Amounts found to have been wrongly denied bear simple interest at eight percent (8%) per year from the thirtieth day after the original claim was submitted."
+    }
+   ]
+  },
+  {
+   "id": "CTR-LAKESHORE-2025",
+   "kind": "payer",
+   "counterparty": "Lakeshore Benefit Trust",
+   "title": "Provider Participation Agreement",
+   "effective": "2025-01-01",
+   "clauses": [
+    {
+     "id": "5.2",
+     "title": "Medical necessity",
+     "text": "A Covered Service is medically necessary when it is consistent with generally accepted standards of medical practice, including the current guidelines of the relevant specialty society, and is clinically appropriate for the Member's condition. Payer shall apply the published guideline criteria in effect on the date of service."
+    },
+    {
+     "id": "7.3",
+     "title": "First-level appeal",
+     "text": "Provider may appeal a denied claim in writing within sixty (60) calendar days of the date of the denial notice. The appeal shall state the grounds and include the supporting clinical documentation. Payer shall decide within thirty (30) calendar days of receipt."
+    },
+    {
+     "id": "7.4",
+     "title": "Second-level appeal",
+     "text": "If the first-level appeal is denied, Provider may request a second-level review by a physician of the same specialty within thirty (30) calendar days of the first-level decision."
+    },
+    {
+     "id": "12.1",
+     "title": "Good-faith resolution",
+     "text": "The parties shall attempt in good faith to resolve any dispute arising under this Agreement through the appeal procedures of Article 7 before invoking this Article."
+    },
+    {
+     "id": "12.2",
+     "title": "Notice of dispute",
+     "text": "A party that considers a final denial to breach this Agreement shall deliver a written notice of dispute to the other party within thirty (30) calendar days of the final denial. The notice shall identify the claim, the amount in dispute, the clause relied upon and the remedy sought."
+    },
+    {
+     "id": "12.3",
+     "title": "Response to notice",
+     "text": "The party receiving a notice of dispute shall respond in writing within forty-five (45) calendar days of receipt. Failure to respond within that period is deemed a rejection."
+    },
+    {
+     "id": "12.4",
+     "title": "Arbitration",
+     "text": "If the dispute is not resolved, either party may demand binding arbitration within twenty (20) business days after the response period ends. The arbitration is seated in Columbus, Ohio, before a single arbitrator."
+    },
+    {
+     "id": "12.6",
+     "title": "Interest on wrongly denied claims",
+     "text": "Amounts found to have been wrongly denied bear simple interest at eight percent (8%) per year from the thirtieth day after the original claim was submitted."
+    },
+    {
+     "id": "14.1",
+     "title": "Claims Submission",
+     "text": "The Payer shall submit claims electronically through the designated portal, utilizing the format and protocols outlined in the Payer Agreement. Claims submitted in paper or through other means may be subject to additional processing fees or delayed payments. All claims must be submitted with the required documentation, including but not limited to receipts, invoices, and patient identification. Failure to provide complete and accurate information may result in denied or delayed payments."
+    },
+    {
+     "id": "15.1",
+     "title": "Audit Rights",
+     "text": "The Payer reserves the right to conduct audits and investigations to ensure compliance with the terms and conditions of this Payer Agreement. Such audits may be conducted on-site, electronically, or through third-party vendors. The Payer shall cooperate fully with the audit team and provide all necessary documentation and information. The Payer shall maintain accurate and reliable records to support all claims submitted and shall retain such records for a period of five years following the date of claim submission."
+    }
+   ]
+  },
+  {
+   "id": "CTR-CEDAR-2025",
+   "kind": "payer",
+   "counterparty": "Cedar Valley Health Plan",
+   "title": "Provider Participation Agreement",
+   "effective": "2025-01-01",
+   "clauses": [
+    {
+     "id": "5.2",
+     "title": "Medical necessity",
+     "text": "A Covered Service is medically necessary when it is consistent with generally accepted standards of medical practice, including the current guidelines of the relevant specialty society, and is clinically appropriate for the Member's condition. Payer shall apply the published guideline criteria in effect on the date of service."
+    },
+    {
+     "id": "7.3",
+     "title": "First-level appeal",
+     "text": "Provider may appeal a denied claim in writing within sixty (60) calendar days of the date of the denial notice. The appeal shall state the grounds and include the supporting clinical documentation. Payer shall decide within thirty (30) calendar days of receipt."
+    },
+    {
+     "id": "7.4",
+     "title": "Second-level appeal",
+     "text": "If the first-level appeal is denied, Provider may request a second-level review by a physician of the same specialty within thirty (30) calendar days of the first-level decision."
+    },
+    {
+     "id": "12.1",
+     "title": "Good-faith resolution",
+     "text": "The parties shall attempt in good faith to resolve any dispute arising under this Agreement through the appeal procedures of Article 7 before invoking this Article."
+    },
+    {
+     "id": "12.2",
+     "title": "Notice of dispute",
+     "text": "A party that considers a final denial to breach this Agreement shall deliver a written notice of dispute to the other party within thirty (30) calendar days of the final denial. The notice shall identify the claim, the amount in dispute, the clause relied upon and the remedy sought."
+    },
+    {
+     "id": "12.3",
+     "title": "Response to notice",
+     "text": "The party receiving a notice of dispute shall respond in writing within forty-five (45) calendar days of receipt. Failure to respond within that period is deemed a rejection."
+    },
+    {
+     "id": "12.4",
+     "title": "Arbitration",
+     "text": "If the dispute is not resolved, either party may demand binding arbitration within twenty (20) business days after the response period ends. The arbitration is seated in Columbus, Ohio, before a single arbitrator."
+    },
+    {
+     "id": "12.6",
+     "title": "Interest on wrongly denied claims",
+     "text": "Amounts found to have been wrongly denied bear simple interest at eight percent (8%) per year from the thirtieth day after the original claim was submitted."
+    },
+    {
+     "id": "14.1",
+     "title": "Claims Submission Requirements",
+     "text": "Meridian Health Group shall submit all claims to Cedar Valley Health Plan in accordance with the plan's standard formatting and submission guidelines. Claims shall be submitted electronically through the plan's secure portal, and shall include all necessary documentation and supporting evidence. Any claims submitted in an inconsistent manner may be subject to delay or denial of payment."
+    },
+    {
+     "id": "15.1",
+     "title": "Audit Rights",
+     "text": "Cedar Valley Health Plan reserves the right to conduct audits of Meridian Health Group's claims submission and payment records at any time, for any reason. Such audits may be conducted in person or remotely, and shall be conducted in accordance with applicable laws and regulations. Meridian Health Group shall provide its full cooperation and assistance in the conduct of any such audits, and shall provide access to all relevant records and documentation as requested."
+    }
+   ]
+  },
+  {
+   "id": "CTR-HARBORLINE-2025",
+   "kind": "payer",
+   "counterparty": "Harborline Insurance Company",
+   "title": "Provider Participation Agreement",
+   "effective": "2025-01-01",
+   "clauses": [
+    {
+     "id": "5.2",
+     "title": "Medical necessity",
+     "text": "A Covered Service is medically necessary when it is consistent with generally accepted standards of medical practice, including the current guidelines of the relevant specialty society, and is clinically appropriate for the Member's condition. Payer shall apply the published guideline criteria in effect on the date of service."
+    },
+    {
+     "id": "7.3",
+     "title": "First-level appeal",
+     "text": "Provider may appeal a denied claim in writing within sixty (60) calendar days of the date of the denial notice. The appeal shall state the grounds and include the supporting clinical documentation. Payer shall decide within thirty (30) calendar days of receipt."
+    },
+    {
+     "id": "7.4",
+     "title": "Second-level appeal",
+     "text": "If the first-level appeal is denied, Provider may request a second-level review by a physician of the same specialty within thirty (30) calendar days of the first-level decision."
+    },
+    {
+     "id": "12.1",
+     "title": "Good-faith resolution",
+     "text": "The parties shall attempt in good faith to resolve any dispute arising under this Agreement through the appeal procedures of Article 7 before invoking this Article."
+    },
+    {
+     "id": "12.2",
+     "title": "Notice of dispute",
+     "text": "A party that considers a final denial to breach this Agreement shall deliver a written notice of dispute to the other party within thirty (30) calendar days of the final denial. The notice shall identify the claim, the amount in dispute, the clause relied upon and the remedy sought."
+    },
+    {
+     "id": "12.3",
+     "title": "Response to notice",
+     "text": "The party receiving a notice of dispute shall respond in writing within forty-five (45) calendar days of receipt. Failure to respond within that period is deemed a rejection."
+    },
+    {
+     "id": "12.4",
+     "title": "Arbitration",
+     "text": "If the dispute is not resolved, either party may demand binding arbitration within twenty (20) business days after the response period ends. The arbitration is seated in Columbus, Ohio, before a single arbitrator."
+    },
+    {
+     "id": "12.6",
+     "title": "Interest on wrongly denied claims",
+     "text": "Amounts found to have been wrongly denied bear simple interest at eight percent (8%) per year from the thirtieth day after the original claim was submitted."
+    },
+    {
+     "id": "14.1",
+     "title": "Claims Submission Procedures",
+     "text": "For all claims submitted to Harborline Insurance Company, Meridian Health Group shall ensure that such claims are accurate, complete, and submitted in accordance with the format and timing requirements specified by Harborline Insurance Company. Claims shall be submitted electronically, unless otherwise agreed upon in writing by Harborline Insurance Company. Meridian Health Group shall maintain detailed records of all claims submitted, including but not limited to, claim forms, supporting documentation, and communication with Harborline Insurance Company. Upon request, Meridian Health Group shall provide all such records to Harborline Insurance Company for review."
+    },
+    {
+     "id": "15.1",
+     "title": "Audit Rights and Cooperation",
+     "text": "Harborline Insurance Company reserves the right to conduct audits of Meridian Health Group's claims submission processes, including but not limited to, review of claim records, interviews with personnel, and on-site inspections. Meridian Health Group shall cooperate fully with such audits, including but not limited to, providing access to all relevant records and personnel, responding to all questions and inquiries, and implementing any corrective actions required by Harborline Insurance Company. Meridian Health Group shall also maintain and implement policies and procedures to prevent and detect any fraud or other irregularities in claims submission, and shall notify Harborline Insurance Company of any such instances promptly upon discovery."
+    }
+   ]
+  },
+  {
+   "id": "CTR-BRIGHTPATH-2026",
+   "kind": "supplier",
+   "counterparty": "Brightpath Medical Supply",
+   "title": "Supply and Services Agreement",
+   "effective": "2026-01-01",
+   "clauses": [
+    {
+     "id": "3.1",
+     "title": "Delivery Requirements",
+     "text": "Deliveries shall be made to the locations designated by Meridian Health Group. All deliveries shall be made during the hours of 8:00 a.m. to 5:00 p.m., Monday through Friday. Delivery personnel shall be properly uniformed and shall present identification upon arrival. The delivery area shall be clearly marked to enable delivery personnel to locate the designated delivery location."
+    },
+    {
+     "id": "4.1",
+     "title": "Service Levels and Price Adjustment",
+     "text": "Brightpath Medical Supply shall maintain an average service level of ninety-five percent (95%) for all orders received and processed within two (2) business days. Failure to meet this service level shall entitle Meridian Health Group to a price adjustment of five percent (5%) for each order delayed beyond such service level. This price adjustment shall be calculated on a monthly basis and applied to future deliveries from Brightpath Medical Supply."
+    }
+   ]
+  },
+  {
+   "id": "CTR-CORVANE-2026",
+   "kind": "supplier",
+   "counterparty": "Corvane Imaging Services",
+   "title": "Supply and Services Agreement",
+   "effective": "2026-01-01",
+   "clauses": [
+    {
+     "id": "3.1",
+     "title": "Delivery and Service Schedule",
+     "text": "All deliveries shall be made to the address specified by Meridian Health Group and shall be completed within the times set out in the delivery schedule. The delivery schedule shall be deemed to be a material part of this Agreement, and the parties shall work to ensure compliance therewith. Failure to meet these delivery times may be considered a material breach of this Agreement. The delivery schedule may be updated with mutual consent of the parties."
+    },
+    {
+     "id": "4.1",
+     "title": "Price Adjustment Clauses",
+     "text": "Price adjustments shall be made in accordance with the formula set out in Exhibit A to this Agreement. The parties agree to regularly review and update this formula to reflect any changes in the costs or other relevant factors that may affect pricing. Any price adjustments shall be made with prior written notice to the other party. The parties agree to meet at least quarterly to discuss pricing and any other matters related to this Agreement."
+    }
+   ]
+  }
+ ]
+}

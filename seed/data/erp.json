@@ -1,0 +1,311 @@
+{
+ "revenue_entries": [
+  {
+   "id": "REV-2026-00620",
+   "claim_id": "CLM-2026-00620",
+   "period": "2026-08",
+   "amount_cents": 61000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00644",
+   "claim_id": "CLM-2026-00644",
+   "period": "2026-08",
+   "amount_cents": 4230000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00654",
+   "claim_id": "CLM-2026-00654",
+   "period": "2026-08",
+   "amount_cents": 187500,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00666",
+   "claim_id": "CLM-2026-00666",
+   "period": "2026-07",
+   "amount_cents": 1184000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00672",
+   "claim_id": "CLM-2026-00672",
+   "period": "2026-07",
+   "amount_cents": 6120000,
+   "case_id": "dn-clm-2026-00672",
+   "status": "disputed",
+   "disputed_reason": "Formal dispute LM-2026-014",
+   "disputed_on": "2026-10-05",
+   "disputed_by": "tom-becker"
+  },
+  {
+   "id": "REV-2026-00677",
+   "claim_id": "CLM-2026-00677",
+   "period": "2026-06",
+   "amount_cents": 238000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00714",
+   "claim_id": "CLM-2026-00714",
+   "period": "2026-06",
+   "amount_cents": 61000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00739",
+   "claim_id": "CLM-2026-00739",
+   "period": "2026-08",
+   "amount_cents": 61000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00750",
+   "claim_id": "CLM-2026-00750",
+   "period": "2026-10",
+   "amount_cents": 187500,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00803",
+   "claim_id": "CLM-2026-00803",
+   "period": "2026-08",
+   "amount_cents": 1184000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00808",
+   "claim_id": "CLM-2026-00808",
+   "period": "2026-07",
+   "amount_cents": 4230000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00818",
+   "claim_id": "CLM-2026-00818",
+   "period": "2026-07",
+   "amount_cents": 312000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00842",
+   "claim_id": "CLM-2026-00842",
+   "period": "2026-06",
+   "amount_cents": 2960000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00861",
+   "claim_id": "CLM-2026-00861",
+   "period": "2026-07",
+   "amount_cents": 61000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00898",
+   "claim_id": "CLM-2026-00898",
+   "period": "2026-10",
+   "amount_cents": 238000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00915",
+   "claim_id": "CLM-2026-00915",
+   "period": "2026-08",
+   "amount_cents": 3415000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00953",
+   "claim_id": "CLM-2026-00953",
+   "period": "2026-09",
+   "amount_cents": 61000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00956",
+   "claim_id": "CLM-2026-00956",
+   "period": "2026-07",
+   "amount_cents": 21500,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-00987",
+   "claim_id": "CLM-2026-00987",
+   "period": "2026-10",
+   "amount_cents": 21500,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01001",
+   "claim_id": "CLM-2026-01001",
+   "period": "2026-10",
+   "amount_cents": 238000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01040",
+   "claim_id": "CLM-2026-01040",
+   "period": "2026-06",
+   "amount_cents": 2960000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01055",
+   "claim_id": "CLM-2026-01055",
+   "period": "2026-09",
+   "amount_cents": 312000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01072",
+   "claim_id": "CLM-2026-01072",
+   "period": "2026-07",
+   "amount_cents": 3415000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01077",
+   "claim_id": "CLM-2026-01077",
+   "period": "2026-07",
+   "amount_cents": 3415000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01088",
+   "claim_id": "CLM-2026-01088",
+   "period": "2026-08",
+   "amount_cents": 142000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01115",
+   "claim_id": "CLM-2026-01115",
+   "period": "2026-10",
+   "amount_cents": 1184000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01135",
+   "claim_id": "CLM-2026-01135",
+   "period": "2026-09",
+   "amount_cents": 4230000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01166",
+   "claim_id": "CLM-2026-01166",
+   "period": "2026-08",
+   "amount_cents": 4230000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01181",
+   "claim_id": "CLM-2026-01181",
+   "period": "2026-08",
+   "amount_cents": 21500,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01187",
+   "claim_id": "CLM-2026-01187",
+   "period": "2026-09",
+   "amount_cents": 4875000,
+   "case_id": "dn-clm-2026-01187",
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01202",
+   "claim_id": "CLM-2026-01202",
+   "period": "2026-10",
+   "amount_cents": 3415000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01209",
+   "claim_id": "CLM-2026-01209",
+   "period": "2026-07",
+   "amount_cents": 187500,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01222",
+   "claim_id": "CLM-2026-01222",
+   "period": "2026-08",
+   "amount_cents": 312000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01245",
+   "claim_id": "CLM-2026-01245",
+   "period": "2026-07",
+   "amount_cents": 238000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01249",
+   "claim_id": "CLM-2026-01249",
+   "period": "2026-08",
+   "amount_cents": 312000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01254",
+   "claim_id": "CLM-2026-01254",
+   "period": "2026-06",
+   "amount_cents": 238000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01273",
+   "claim_id": "CLM-2026-01273",
+   "period": "2026-10",
+   "amount_cents": 1184000,
+   "case_id": null,
+   "status": "recognized"
+  },
+  {
+   "id": "REV-2026-01276",
+   "claim_id": "CLM-2026-01276",
+   "period": "2026-09",
+   "amount_cents": 3415000,
+   "case_id": null,
+   "status": "recognized"
+  }
+ ]
+}

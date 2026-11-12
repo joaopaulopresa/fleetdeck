@@ -13,6 +13,7 @@ members = [
     "fleetdeck-control",
     "fleetdeck-egress",
     "fleetdeck-gateway",
+    "fleetdeck-mock",
     "fleetdeck-operator",
 ]
 
@@ -556,6 +557,7 @@ dependencies = [
     { name = "fleetdeck-control" },
     { name = "fleetdeck-egress" },
     { name = "fleetdeck-gateway" },
+    { name = "fleetdeck-mock" },
     { name = "fleetdeck-operator" },
 ]
 
@@ -576,6 +578,7 @@ requires-dist = [
     { name = "fleetdeck-control", editable = "control-plane" },
     { name = "fleetdeck-egress", editable = "egress-proxy" },
     { name = "fleetdeck-gateway", editable = "model-gateway" },
+    { name = "fleetdeck-mock", editable = "mock-systems" },
     { name = "fleetdeck-operator", editable = "operator" },
 ]
 
@@ -673,6 +676,23 @@ requires-dist = [
     { name = "fleetdeck-common", editable = "common" },
     { name = "langfuse", specifier = ">=3.9" },
     { name = "prometheus-client", specifier = ">=0.23" },
+    { name = "uvicorn", specifier = ">=0.38" },
+]
+
+[[package]]
+name = "fleetdeck-mock"
+version = "0.1.0"
+source = { editable = "mock-systems" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "fleetdeck-common" },
+    { name = "uvicorn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.120" },
+    { name = "fleetdeck-common", editable = "common" },
     { name = "uvicorn", specifier = ">=0.38" },
 ]
 

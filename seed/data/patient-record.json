@@ -1,0 +1,825 @@
+{
+ "patients": [
+  {
+   "id": "PAT-0001",
+   "mrn": "MHG-104382",
+   "name": "Harold Whitaker",
+   "date_of_birth": "1959-03-17",
+   "sex": "male",
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "problems": [
+    "Ischemic cardiomyopathy",
+    "Heart failure with reduced ejection fraction, NYHA class III",
+    "Left bundle branch block",
+    "Type 2 diabetes mellitus"
+   ],
+   "medications": [
+    "Sacubitril/valsartan 97/103 mg twice daily (since 2026-03-02)",
+    "Carvedilol 25 mg twice daily (since 2026-03-02)",
+    "Spironolactone 25 mg daily (since 2026-03-16)",
+    "Dapagliflozin 10 mg daily (since 2026-03-16)",
+    "Metformin 1000 mg twice daily"
+   ],
+   "allergies": [
+    "Penicillin"
+   ],
+   "case_id": "ep-pat-0001"
+  },
+  {
+   "id": "PAT-0002",
+   "mrn": "MHG-127617",
+   "name": "Leticia Wong",
+   "date_of_birth": "1992-04-15",
+   "sex": "female",
+   "problems": [
+    "Hypertension",
+    "Diabetes"
+   ],
+   "medications": [
+    "10mg Losartan",
+    "50mg Lisinopril",
+    "100mg Metoprolol"
+   ],
+   "allergies": [
+    "Peanuts"
+   ],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0002"
+  },
+  {
+   "id": "PAT-0003",
+   "mrn": "MHG-166228",
+   "name": "Dimitri Lee",
+   "date_of_birth": "1978-11-20",
+   "sex": "male",
+   "problems": [
+    "Atrial Fibrillation",
+    "Chronic Kidney Disease"
+   ],
+   "medications": [
+    "20mg Sotalol"
+   ],
+   "allergies": [],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0003"
+  },
+  {
+   "id": "PAT-0004",
+   "mrn": "MHG-150135",
+   "name": "Elijah Patel",
+   "date_of_birth": "2001-08-22",
+   "sex": "male",
+   "problems": [
+    "Hypothyroidism"
+   ],
+   "medications": [
+    "25mg Levothyroxine"
+   ],
+   "allergies": [],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0004"
+  },
+  {
+   "id": "PAT-0005",
+   "mrn": "MHG-196245",
+   "name": "Zara Ali",
+   "date_of_birth": "1985-02-12",
+   "sex": "female",
+   "problems": [
+    "Hypertension",
+    "Congestive Heart Failure"
+   ],
+   "medications": [
+    "20mg Amlodipine",
+    "5mg Furosemide"
+   ],
+   "allergies": [],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0005"
+  },
+  {
+   "id": "PAT-0006",
+   "mrn": "MHG-179174",
+   "name": "Cristina Chen",
+   "date_of_birth": "1956-10-18",
+   "sex": "female",
+   "problems": [
+    "Hypertension",
+    "Hyperlipidemia",
+    "Bunions"
+   ],
+   "medications": [
+    "40mg Atorvastatin"
+   ],
+   "allergies": [
+    "Tree Nuts"
+   ],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0006"
+  },
+  {
+   "id": "PAT-0007",
+   "mrn": "MHG-199658",
+   "name": "Santiago Brooks",
+   "date_of_birth": "1969-06-25",
+   "sex": "male",
+   "problems": [
+    "Atrial Fibrillation",
+    "Chronic Obstructive Pulmonary Disease"
+   ],
+   "medications": [
+    "80mg Propranolol"
+   ],
+   "allergies": [],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0007"
+  },
+  {
+   "id": "PAT-0008",
+   "mrn": "MHG-157064",
+   "name": "Aisha Jensen",
+   "date_of_birth": "1978-11-23",
+   "sex": "female",
+   "problems": [
+    "High Blood Pressure",
+    "High Cholesterol",
+    "Osteoarthritis"
+   ],
+   "medications": [
+    "Lisinopril 10mg/day",
+    "Simvastatin 20mg/day",
+    "Celecoxib 100mg/day"
+   ],
+   "allergies": [
+    "Naproxen"
+   ],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0008"
+  },
+  {
+   "id": "PAT-0009",
+   "mrn": "MHG-123055",
+   "name": "Gustavo Nguyen",
+   "date_of_birth": "1965-05-02",
+   "sex": "male",
+   "problems": [
+    "Heart Failure",
+    "Kidney Disease"
+   ],
+   "medications": [
+    "Metoprolol 50mg/day",
+    "Furosemide 40mg/day"
+   ],
+   "allergies": [],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0009"
+  },
+  {
+   "id": "PAT-0010",
+   "mrn": "MHG-162164",
+   "name": "Sofia Patel",
+   "date_of_birth": "1982-03-12",
+   "sex": "female",
+   "problems": [
+    "Atrial Fibrillation",
+    "Osteoporosis"
+   ],
+   "medications": [
+    "Warfarin 5mg/day",
+    "Alendronate 70mg/week"
+   ],
+   "allergies": [
+    "Penicillin"
+   ],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0010"
+  },
+  {
+   "id": "PAT-0011",
+   "mrn": "MHG-127199",
+   "name": "Rafael Kim",
+   "date_of_birth": "1975-02-22",
+   "sex": "male",
+   "problems": [
+    "High Blood Pressure",
+    "Chronic Kidney Disease"
+   ],
+   "medications": [
+    "Ramipril 5mg/day",
+    "Aspirin 81mg/day"
+   ],
+   "allergies": [],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0011"
+  },
+  {
+   "id": "PAT-0012",
+   "mrn": "MHG-164705",
+   "name": "Leila Garcia",
+   "date_of_birth": "1980-07-11",
+   "sex": "female",
+   "problems": [
+    "High Cholesterol",
+    "Type 2 Diabetes"
+   ],
+   "medications": [
+    "Atorvastatin 20mg/day",
+    "Metformin 500mg/day"
+   ],
+   "allergies": [
+    "Pain relievers"
+   ],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0012"
+  },
+  {
+   "id": "PAT-0013",
+   "mrn": "MHG-157334",
+   "name": "Brian Wong",
+   "date_of_birth": "1968-09-28",
+   "sex": "male",
+   "problems": [
+    "Acute Coronary Syndrome",
+    "High Cholesterol"
+   ],
+   "medications": [
+    "Clopidogrel 75mg/day",
+    "Aspirin 81mg/day",
+    "Simvastatin 20mg/day"
+   ],
+   "allergies": [
+    "Nuts",
+    "Shellfish"
+   ],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0013"
+  },
+  {
+   "id": "PAT-0014",
+   "mrn": "MHG-168113",
+   "name": "Jaspreet De La Cruz",
+   "date_of_birth": "1962-09-28",
+   "sex": "female",
+   "problems": [
+    "Atrial Fibrillation",
+    "Hypertension",
+    "Hyperlipidemia"
+   ],
+   "medications": [
+    "Metoprolol 50mg (PO)",
+    "Lisinopril 10mg (PO)",
+    "Atorvastatin 20mg (PO)",
+    "Aspirin 81mg (PO)"
+   ],
+   "allergies": [],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0014"
+  },
+  {
+   "id": "PAT-0015",
+   "mrn": "MHG-112008",
+   "name": "Lakewood Rodriguez",
+   "date_of_birth": "1975-02-10",
+   "sex": "male",
+   "problems": [
+    "Coronary Artery Disease",
+    "Diabetes Mellitus",
+    "Osteoporosis"
+   ],
+   "medications": [
+    "Nitroglycerin 0.4mg (SL)",
+    "Metformin 500mg (PO)",
+    "Alendronate 70mg (PO)"
+   ],
+   "allergies": [
+    "Ibuprofen"
+   ],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0015"
+  },
+  {
+   "id": "PAT-0016",
+   "mrn": "MHG-190148",
+   "name": "Maricela Fraser",
+   "date_of_birth": "1957-03-11",
+   "sex": "female",
+   "problems": [
+    "Congestive Heart Failure",
+    "Chronic Obstructive Pulmonary Disease"
+   ],
+   "medications": [
+    "Furosemide 40mg (PO)",
+    "Salmeterol 50mcg (INH)",
+    "Ipratropium 21mcg (INH)"
+   ],
+   "allergies": [
+    "Sulfonamides"
+   ],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0016"
+  },
+  {
+   "id": "PAT-0017",
+   "mrn": "MHG-132747",
+   "name": "Jeraldine Singleton",
+   "date_of_birth": "1982-10-17",
+   "sex": "female",
+   "problems": [
+    "Rheumatoid Arthritis",
+    "Hypertension"
+   ],
+   "medications": [
+    "Methotrexate 15mg (PO)",
+    "Lisinopril 10mg (PO)",
+    "Prednisone 10mg (PO)"
+   ],
+   "allergies": [],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0017"
+  },
+  {
+   "id": "PAT-0018",
+   "mrn": "MHG-115619",
+   "name": "Kalliope Sawyer",
+   "date_of_birth": "1965-07-29",
+   "sex": "female",
+   "problems": [
+    "Osteoarthritis",
+    "Hyperlipidemia"
+   ],
+   "medications": [
+    "Celecoxib 200mg (PO)",
+    "Atorvastatin 20mg (PO)",
+    "Glucosamine 500mg (PO)"
+   ],
+   "allergies": [
+    "Acetaminophen"
+   ],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0018"
+  },
+  {
+   "id": "PAT-0019",
+   "mrn": "MHG-195621",
+   "name": "Geraldo Morse",
+   "date_of_birth": "1991-06-20",
+   "sex": "male",
+   "problems": [
+    "Type 1 Diabetes",
+    "Allergies"
+   ],
+   "medications": [
+    "Insulin 10U (SC)",
+    "Mortin 20mg (PO)"
+   ],
+   "allergies": [
+    "Peanuts",
+    "Shellfish"
+   ],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0019"
+  },
+  {
+   "id": "PAT-0020",
+   "mrn": "MHG-170898",
+   "name": "Leticia Nguyen",
+   "date_of_birth": "1995-02-27",
+   "sex": "female",
+   "problems": [
+    "Coronary Artery Disease",
+    "Diabetes"
+   ],
+   "medications": [
+    "Lovastatin 20mg Daily",
+    "Metformin 500mg Daily",
+    "Aspirin 81mg Daily"
+   ],
+   "allergies": [
+    "Shellfish"
+   ],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0020"
+  },
+  {
+   "id": "PAT-0021",
+   "mrn": "MHG-114311",
+   "name": "Julian Reyes",
+   "date_of_birth": "1972-09-14",
+   "sex": "male",
+   "problems": [
+    "Congestive Heart Failure",
+    "Hypertension"
+   ],
+   "medications": [
+    "Furosemide 20mg Daily",
+    "Enalapril 10mg Daily"
+   ],
+   "allergies": [],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0021"
+  },
+  {
+   "id": "PAT-0022",
+   "mrn": "MHG-142889",
+   "name": "Camila Garcia",
+   "date_of_birth": "1988-11-22",
+   "sex": "female",
+   "problems": [
+    "Hypertension",
+    "Angina Pectoris"
+   ],
+   "medications": [
+    "Amlodipine 5mg Daily",
+    "Metoprolol 50mg Daily"
+   ],
+   "allergies": [
+    "Peanuts"
+   ],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0022"
+  },
+  {
+   "id": "PAT-0023",
+   "mrn": "MHG-124808",
+   "name": "Rafael Torres",
+   "date_of_birth": "1961-04-01",
+   "sex": "male",
+   "problems": [
+    "Rheumatoid Arthritis",
+    "Osteoporosis"
+   ],
+   "medications": [
+    "Celecoxib 200mg Daily",
+    "Meloxicam 15mg Daily"
+   ],
+   "allergies": [],
+   "physician_id": "elena-park",
+   "physician": "Dr. Elena Park",
+   "case_id": "ep-pat-0023"
+  },
+  {
+   "id": "PAT-0024",
+   "mrn": "MHG-149342",
+   "name": "Leila Tran",
+   "date_of_birth": "1992-06-12",
+   "sex": "female",
+   "problems": [
+    "Hypertension",
+    "Myocardial Infarction"
+   ],
+   "medications": [
+    "Atenolol 50mg Daily",
+    "Lisinopril 20mg Daily"
+   ],
+   "allergies": [
+    "Lactose"
+   ],
+   "physician_id": "ext-okafor",
+   "physician": "Dr. Samuel Okafor",
+   "case_id": "ep-pat-0024"
+  },
+  {
+   "id": "PAT-0025",
+   "mrn": "MHG-106590",
+   "name": "Sylvia Singh",
+   "date_of_birth": "1956-08-25",
+   "sex": "female",
+   "problems": [
+    "Congestive Heart Failure",
+    "Diabetes"
+   ],
+   "medications": [
+    "Bisoprolol 5mg Daily",
+    "Ramipril 2.5mg Daily"
+   ],
+   "allergies": [
+    "Gluten"
+   ],
+   "physician_id": "ext-halvorsen",
+   "physician": "Dr. Ingrid Halvorsen",
+   "case_id": "ep-pat-0025"
+  }
+ ],
+ "encounters": [
+  {
+   "id": "ENC-000101",
+   "date": "2026-03-02",
+   "type": "Cardiology clinic visit",
+   "summary": "Guideline-directed medical therapy started for HFrEF",
+   "note": "Dyspnea on walking one block, two-pillow orthopnea. Echocardiogram today: LVEF 30%. Started sacubitril/valsartan and carvedilol; spironolactone and dapagliflozin to be added at the two-week visit. Plan: titrate to target doses and reassess LVEF after at least three months of optimal therapy.",
+   "results": [
+    {
+     "name": "LVEF (echocardiogram)",
+     "value": "30",
+     "unit": "%"
+    }
+   ],
+   "patient_id": "PAT-0001",
+   "clinician": "Dr. Elena Park"
+  },
+  {
+   "id": "ENC-000102",
+   "date": "2026-08-14",
+   "type": "Cardiology clinic visit",
+   "summary": "Persistent NYHA class III symptoms after five months of optimal medical therapy",
+   "note": "On target doses of sacubitril/valsartan, carvedilol, spironolactone and dapagliflozin since March 2026 (more than five months). Still breathless on minimal exertion, NYHA class III. Repeat echocardiogram: LVEF 28%. ECG: sinus rhythm, left bundle branch block, QRS duration 158 ms. Meets guideline criteria for cardiac resynchronization therapy with defibrillator: LVEF 35% or less, LBBB with QRS 150 ms or more, NYHA class III on optimal medical therapy for at least three months. Discussed with the patient; he consents. Referred for CRT-D implantation.",
+   "results": [
+    {
+     "name": "LVEF (echocardiogram)",
+     "value": "28",
+     "unit": "%"
+    },
+    {
+     "name": "QRS duration (ECG)",
+     "value": "158",
+     "unit": "ms"
+    },
+    {
+     "name": "NT-proBNP",
+     "value": "2840",
+     "unit": "pg/mL"
+    }
+   ],
+   "patient_id": "PAT-0001",
+   "clinician": "Dr. Elena Park"
+  },
+  {
+   "id": "ENC-000103",
+   "date": "2026-09-22",
+   "type": "Procedure",
+   "summary": "CRT-D implantation, uncomplicated",
+   "note": "Cardiac resynchronization therapy defibrillator implanted under local anesthesia and sedation. Right atrial, right ventricular and coronary sinus leads placed with good thresholds. No complications. Discharged the next day. Device check in two weeks.",
+   "results": [
+    {
+     "name": "Paced QRS duration",
+     "value": "124",
+     "unit": "ms"
+    }
+   ],
+   "patient_id": "PAT-0001",
+   "clinician": "Dr. Elena Park"
+  },
+  {
+   "id": "ENC-000201",
+   "patient_id": "PAT-0002",
+   "date": "2026-04-04",
+   "clinician": "Dr. Elena Park",
+   "type": "Outpatient Visit",
+   "summary": "Follow-up for hypertension and diabetes.",
+   "note": "Blood pressure 135/85 mm Hg, random glucose 210 mg/dL. Patient is taking metformin and lisinopril. Assessment: Poorly controlled hypertension and diabetes. Plan: Restart metformin and adjust lisinopril dose.",
+   "results": []
+  },
+  {
+   "id": "ENC-000301",
+   "patient_id": "PAT-0003",
+   "date": "2026-09-01",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Outpatient Visit",
+   "summary": "Follow-up for atrial fibrillation and chronic kidney disease.",
+   "note": "Atrial fibrillation controlled with warfarin and metoprolol. Serum creatinine 2.1 mg/dL. Assessment: Controlled atrial fibrillation and stable kidney function. Plan: Monitor renal function and adjust medications as needed.",
+   "results": []
+  },
+  {
+   "id": "ENC-000401",
+   "patient_id": "PAT-0004",
+   "date": "2026-03-28",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Outpatient Visit",
+   "summary": "Follow-up for hypothyroidism.",
+   "note": "TSH 15.2 uU/mL. Patient taking levothyroxine. Assessment: Suboptimal thyroxine replacement. Plan: Increase levothyroxine dose.",
+   "results": []
+  },
+  {
+   "id": "ENC-000501",
+   "patient_id": "PAT-0005",
+   "date": "2026-08-21",
+   "clinician": "Dr. Elena Park",
+   "type": "Outpatient Visit",
+   "summary": "Follow-up for congestive heart failure.",
+   "note": "Left ventricular ejection fraction 30%, serum B-type natriuretic peptide 400 pg/mL. Assessment: Poorly controlled congestive heart failure. Plan: Increase lisinopril and furosemide doses.",
+   "results": []
+  },
+  {
+   "id": "ENC-000601",
+   "patient_id": "PAT-0006",
+   "date": "2026-09-24",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Outpatient Visit",
+   "summary": "Follow-up for hypertension and hyperlipidemia.",
+   "note": "Aortic systolic pressure 140 mm Hg, LDL 160 mg/dL. Patient taking lisinopril and atorvastatin. Assessment: Uncontrolled hypertension and hyperlipidemia. Plan: Adjust lisinopril and atorvastatin doses.",
+   "results": []
+  },
+  {
+   "id": "ENC-000701",
+   "patient_id": "PAT-0007",
+   "date": "2026-08-22",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Outpatient Visit",
+   "summary": "Follow-up for atrial fibrillation and COPD.",
+   "note": "Aortic systolic pressure 90 mm Hg, FEV1 2.5 L. Patient taking warfarin and albuterol. Assessment: Controlled atrial fibrillation and stable COPD. Plan: Monitor oxygen saturation and adjust medications as needed.",
+   "results": []
+  },
+  {
+   "id": "ENC-000801",
+   "patient_id": "PAT-0008",
+   "date": "2026-07-25",
+   "clinician": "Dr. Elena Park",
+   "type": "Office Visit",
+   "summary": "Follow-up on chronic conditions.",
+   "note": "BP 145/95 mmHg, Cholesterol 230 mg/dL. Continued to recommend lifestyle modifications with close follow-up. Also reviewed osteoarthritis management options.",
+   "results": []
+  },
+  {
+   "id": "ENC-000901",
+   "patient_id": "PAT-0009",
+   "date": "2026-04-03",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Follow-up Visit",
+   "summary": "Reviewing current medication regimen and overall health.",
+   "note": "Patient has worsening kidney function with decreased eGFR. Adjusted medications for heart failure and kidney disease. Recommended fluid restriction and monitoring.",
+   "results": []
+  },
+  {
+   "id": "ENC-001001",
+   "patient_id": "PAT-0010",
+   "date": "2026-06-07",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Office Visit",
+   "summary": "Review of Atrial Fibrillation and Osteoporosis.",
+   "note": "Patient has persistent Atrial Fibrillation with no acute symptoms. Continued on anticoagulation therapy. Also, assessed for osteoporosis risk and started vitamin D supplements. Recommended follow-up in 3 months.",
+   "results": []
+  },
+  {
+   "id": "ENC-001101",
+   "patient_id": "PAT-0011",
+   "date": "2026-08-25",
+   "clinician": "Dr. Elena Park",
+   "type": "Follow-up Visit",
+   "summary": "Monitoring for chronic conditions.",
+   "note": "BP 150/90 mmHg, eGFR 45 mL/min. Continued to recommend lifestyle modifications with close follow-up. Also, managed chronic kidney disease with medication adjustments.",
+   "results": []
+  },
+  {
+   "id": "ENC-001201",
+   "patient_id": "PAT-0012",
+   "date": "2026-07-05",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Office Visit",
+   "summary": "Follow-up on diabetes and cholesterol management.",
+   "note": "Cholesterol 220 mg/dL, HbA1c 9%. Continued to stress the importance of diet and exercise for diabetes management. Also reviewed medication options for cholesterol management.",
+   "results": []
+  },
+  {
+   "id": "ENC-001301",
+   "patient_id": "PAT-0013",
+   "date": "2026-10-17",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Post-Emergency Department Visit",
+   "summary": "Follow-up on Acute Coronary Syndrome.",
+   "note": "Patient is asymptomatic with normal ECG. Continued on medication therapy for Acute Coronary Syndrome and High Cholesterol. Recommended close follow-up in 2 weeks for cardiac monitoring.",
+   "results": []
+  },
+  {
+   "id": "ENC-001401",
+   "patient_id": "PAT-0014",
+   "date": "2026-08-07",
+   "clinician": "Dr. Elena Park",
+   "type": "Office Visit",
+   "summary": "Routine follow-up for atrial fibrillation management.",
+   "note": "The patient's Atrial Fibrillation is well-controlled on current medication regimen. Blood pressure is elevated at 152/98 mmHg. Lipid profile is satisfactory. Continue current therapy and schedule follow-up in 6 weeks.",
+   "results": []
+  },
+  {
+   "id": "ENC-001501",
+   "patient_id": "PAT-0015",
+   "date": "2026-06-10",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Follow-up Visit",
+   "summary": "Review of CAD, diabetes, and osteoporosis management.",
+   "note": "The patient is in New York Heart Association Class II despite medical therapy. HbA1c is 7.5% with stable blood glucose levels. Continue statin therapy and schedule bone mineral density scan in 6 months.",
+   "results": []
+  },
+  {
+   "id": "ENC-001601",
+   "patient_id": "PAT-0016",
+   "date": "2026-03-17",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Office Visit",
+   "summary": "Management of congestive heart failure and COPD.",
+   "note": "The patient's ejection fraction is 30% with stable dyspnea and edema. Pulmonary function test results show a slight decrease in FEV1. Continue current medication regimen and schedule follow-up in 3 months.",
+   "results": []
+  },
+  {
+   "id": "ENC-001701",
+   "patient_id": "PAT-0017",
+   "date": "2026-05-05",
+   "clinician": "Dr. Elena Park",
+   "type": "Office Visit",
+   "summary": "Review of rheumatoid arthritis and hypertension management.",
+   "note": "The patient's disease activity is well-controlled on current medication regimen. Blood pressure is elevated at 140/90 mmHg. Schedule follow-up in 6 weeks and refer to physical therapy for exercise program.",
+   "results": []
+  },
+  {
+   "id": "ENC-001801",
+   "patient_id": "PAT-0018",
+   "date": "2026-07-28",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Office Visit",
+   "summary": "Management of osteoarthritis and hyperlipidemia.",
+   "note": "The patient reports improvement in joint pain with current medication regimen. Lipid profile shows elevated LDL levels. Continue current therapy and schedule follow-up in 3 months.",
+   "results": []
+  },
+  {
+   "id": "ENC-001901",
+   "patient_id": "PAT-0019",
+   "date": "2026-03-23",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Office Visit",
+   "summary": "Review of type 1 diabetes and allergy management.",
+   "note": "The patient's HbA1c is 8.2% with stable blood glucose levels. Allergy testing shows a positive reaction to tree nuts. Schedule follow-up in 6 weeks and provide further education on diabetes management.",
+   "results": []
+  },
+  {
+   "id": "ENC-002001",
+   "patient_id": "PAT-0020",
+   "date": "2026-10-19",
+   "clinician": "Dr. Elena Park",
+   "type": "Office Visit",
+   "summary": "Routine checkup for CAD and diabetes.",
+   "note": "The patient's blood pressure is well-controlled, and there are no signs of acute coronary syndrome. The cardiac medication regimen remains unchanged.",
+   "results": []
+  },
+  {
+   "id": "ENC-002101",
+   "patient_id": "PAT-0021",
+   "date": "2026-05-17",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Office Visit",
+   "summary": "Routine checkup for CHF and HTN.",
+   "note": "The patient's HF symptoms are stable. The ejection fraction remains low, but there are no signs of worsening heart failure. The diuretic regimen remains unchanged.",
+   "results": []
+  },
+  {
+   "id": "ENC-002201",
+   "patient_id": "PAT-0022",
+   "date": "2026-03-20",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Office Visit",
+   "summary": "Routine checkup for HTN and angina.",
+   "note": "The patient's blood pressure is elevated, but the patient is asymptomatic for angina. The hypertension medication regimen is adjusted to reduce the blood pressure.",
+   "results": []
+  },
+  {
+   "id": "ENC-002301",
+   "patient_id": "PAT-0023",
+   "date": "2026-07-10",
+   "clinician": "Dr. Elena Park",
+   "type": "Office Visit",
+   "summary": "Routine checkup for RA and osteoporosis.",
+   "note": "The patient's rheumatoid arthritis symptoms are stable, and the joint inflammation is well-controlled. The osteoporosis medication regimen remains unchanged to prevent further bone loss.",
+   "results": []
+  },
+  {
+   "id": "ENC-002401",
+   "patient_id": "PAT-0024",
+   "date": "2026-08-09",
+   "clinician": "Dr. Samuel Okafor",
+   "type": "Office Visit",
+   "summary": "Routine checkup for HTN and MI.",
+   "note": "The patient's hypertension is well-controlled, but there are no signs of full recovery from the myocardial infarction. The cardiac medication regimen remains unchanged.",
+   "results": []
+  },
+  {
+   "id": "ENC-002501",
+   "patient_id": "PAT-0025",
+   "date": "2026-10-10",
+   "clinician": "Dr. Ingrid Halvorsen",
+   "type": "Office Visit",
+   "summary": "Routine checkup for CHF and diabetes.",
+   "note": "The patient's HF symptoms are stable, but the patient requires further medication adjustments to prevent further decompensation. The blood glucose levels remain well-controlled for the diabetes.",
+   "results": []
+  }
+ ]
+}

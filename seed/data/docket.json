@@ -1,0 +1,35 @@
+{
+ "legal_cases": [
+  {
+   "id": "LM-2026-014",
+   "title": "Lakeshore Benefit Trust: denied spinal fusion claim CLM-2026-00672",
+   "counterparty": "Lakeshore Benefit Trust",
+   "status": "open",
+   "stage": "Notice of dispute sent, waiting for the payer",
+   "opened_on": "2026-10-02",
+   "opened_by": "priya-nair",
+   "claim_id": "CLM-2026-00672",
+   "case_id": "dn-clm-2026-00672",
+   "notices": [
+    {
+     "sent_on": "2026-10-09",
+     "sent_by": "priya-nair",
+     "text": "Notice of dispute under clause 12.2."
+    }
+   ]
+  }
+ ],
+ "deadlines": [
+  {
+   "id": "DL-2026-031",
+   "legal_case_id": "LM-2026-014",
+   "status": "open",
+   "rule": "notice_response",
+   "title": "Payer's response to a notice of dispute",
+   "event_date": "2026-10-09",
+   "due_date": "2026-11-23",
+   "computation": "45 calendar days after 2026-10-09 is 2026-11-23 (Monday)",
+   "source": "Payer agreement, clause 12.3: 45 calendar days from receipt of the notice"
+  }
+ ]
+}

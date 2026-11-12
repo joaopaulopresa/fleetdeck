@@ -7,6 +7,7 @@ dependencies = [
     "fleetdeck-common",
     "fleetdeck-control",
     "fleetdeck-egress",
+    "fleetdeck-mock",
     "fleetdeck-gateway",
     "fleetdeck-operator",
 ]
@@ -15,12 +16,13 @@ dependencies = [
 package = false
 
 [tool.uv.workspace]
-members = ["common", "control-plane", "operator", "model-gateway", "egress-proxy"]
+members = ["common", "control-plane", "operator", "model-gateway", "egress-proxy", "mock-systems"]
 
 [tool.uv.sources]
 fleetdeck-common = { workspace = true }
 fleetdeck-control = { workspace = true }
 fleetdeck-egress = { workspace = true }
+fleetdeck-mock = { workspace = true }
 fleetdeck-gateway = { workspace = true }
 fleetdeck-operator = { workspace = true }
 
@@ -46,6 +48,7 @@ ignore = ["D203", "D213", "D105", "D107", "S101"]
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["D", "S"]
 "**/migrations/**" = ["D", "S608"]
+"seed/generate.py" = ["E501"]
 
 [tool.mypy]
 strict = true
@@ -57,6 +60,7 @@ mypy_path = [
     "operator/src",
     "model-gateway/src",
     "egress-proxy/src",
+    "mock-systems/src",
 ]
 explicit_package_bases = true
 
