@@ -101,14 +101,14 @@ def _body(spec: AgentSpec) -> dict[str, Any]:
 class KubernetesAgentCluster:
     """:class:`AgentCluster` backed by the Kubernetes API."""
 
-    def __init__(self, system_namespace: str, *, in_cluster: bool) -> None:
+    def __init__(self, keys_namespace: str, *, in_cluster: bool) -> None:
         from kubernetes import client, config
 
         if in_cluster:
             config.load_incluster_config()  # type: ignore[no-untyped-call]
         else:
             config.load_kube_config()  # type: ignore[no-untyped-call]
-        self._namespace = system_namespace
+        self._namespace = keys_namespace
         self._custom = client.CustomObjectsApi()
         self._core = client.CoreV1Api()
         self._api_exception = client.ApiException

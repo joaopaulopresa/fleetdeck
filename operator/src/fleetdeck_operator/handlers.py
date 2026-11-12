@@ -55,8 +55,8 @@ def apply_manifest(manifest: Manifest) -> None:
 
 
 def read_keys(secret_name: str) -> dict[str, str]:
-    """Read an agent's keys from the system namespace and map them to pod environment names."""
-    secret = client.CoreV1Api().read_namespaced_secret(secret_name, get_settings().system_namespace)
+    """Read an agent's keys from the keys namespace and map them to pod environment names."""
+    secret = client.CoreV1Api().read_namespaced_secret(secret_name, get_settings().keys_namespace)
     data = {key: base64.b64decode(value).decode() for key, value in (secret.data or {}).items()}
     return {
         "FLEET_MODEL_KEY": data["model_key"],

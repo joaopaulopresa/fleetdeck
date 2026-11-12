@@ -39,7 +39,7 @@ def build_context(
             cluster = FakeAgentCluster()
         else:
             cluster = KubernetesAgentCluster(
-                settings.system_namespace, in_cluster=settings.cluster_mode == "incluster"
+                settings.keys_namespace, in_cluster=settings.cluster_mode == "incluster"
             )
     if hermes is None:
         hermes = HttpHermesClient(settings, run_timeout=settings.run_timeout_seconds)

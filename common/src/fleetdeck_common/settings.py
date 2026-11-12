@@ -10,6 +10,8 @@ class CommonSettings(BaseSettings):
 
     log_level: str = "INFO"
     system_namespace: str = "fleet-system"
+    #: Holds only the agents' keys; the provider key is not readable from it.
+    keys_namespace: str = "fleet-keys"
     agent_namespace_prefix: str = "agent-"
     cluster_domain: str = "cluster.local"
     hermes_port: int = 8642
