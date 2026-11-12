@@ -5,6 +5,7 @@ run against the real control-plane application.
 """
 
 from collections.abc import AsyncIterator, Iterator
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -158,6 +159,7 @@ async def context(database_url: str) -> AsyncIterator[AppContext]:
         wake_poll_seconds=0.01,
         idle_seconds=60,
         internal_token="internal-test-token",
+        bundles_dir=Path(__file__).parents[3] / "bundles",
     )
     cluster = FakeAgentCluster()
     ctx = build_context(
@@ -168,12 +170,14 @@ async def context(database_url: str) -> AsyncIterator[AppContext]:
             await connection.execute(
                 text(
                     "select string_agg(format('%I', tablename), ', ') from pg_tables "
-                    "where schemaname = 'public' "
-                    "and tablename not in ('alembic_version', 'audit_events')"
+                    "where schemaname = 'public' and tablename <> 'alembic_version'"
                 )
             )
         ).scalar_one()
+        # Tests start from an empty audit trail; only here is its append-only trigger lifted.
+        await connection.execute(text("alter table audit_events disable trigger user"))
         await connection.execute(text(f"truncate {tables} restart identity cascade"))
+        await connection.execute(text("alter table audit_events enable trigger user"))
     async with ctx.db.session() as session:
         session.add_all(
             Person(**{c.name: getattr(p, c.name) for c in Person.__table__.columns}) for p in PEOPLE

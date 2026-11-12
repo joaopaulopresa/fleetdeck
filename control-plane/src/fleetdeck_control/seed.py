@@ -7,10 +7,19 @@ from typing import Any
 
 import yaml
 from fleetdeck_common.errors import ConflictError
+from sqlalchemy import select
 
 from fleetdeck_control.agents.service import NewAgent
 from fleetdeck_control.context import AppContext, build_context
-from fleetdeck_control.models import Case, CaseMember, KbDocument, Person, System, ToolPermission
+from fleetdeck_control.models import (
+    Case,
+    CaseMember,
+    KbDocument,
+    Person,
+    RequestPolicy,
+    System,
+    ToolPermission,
+)
 from fleetdeck_control.settings import get_settings
 
 log = logging.getLogger(__name__)
@@ -86,6 +95,14 @@ async def seed_knowledge(context: AppContext, documents: list[dict[str, Any]]) -
                 session.add(KbDocument(status="published", **row))
 
 
+async def seed_policies(context: AppContext, rules: list[dict[str, Any]]) -> None:
+    """Insert the collaboration rules, unless an administrator has already set some."""
+    async with context.db.session() as session:
+        if await session.scalar(select(RequestPolicy).limit(1)) is not None:
+            return
+        session.add_all(RequestPolicy(**rule) for rule in rules)
+
+
 def _load(path: Path, name: str) -> list[dict[str, Any]]:
     file = path / name
     if not file.is_file():
@@ -104,6 +121,7 @@ async def seed_all(path: Path) -> None:
         await seed_access(context, _load(path, "systems.yaml"))
         await seed_cases(context, _load(path, "cases.yaml"))
         await seed_knowledge(context, _load(path, "knowledge.json"))
+        await seed_policies(context, _load(path, "policies.yaml"))
         log.info("seeded %d people", len(people))
     finally:
         await context.db.dispose()
