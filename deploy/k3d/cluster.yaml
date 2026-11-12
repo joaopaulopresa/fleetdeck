@@ -1,0 +1,29 @@
+# Local demo cluster: one k3s server node in Docker.
+# The k3s built-in network policy controller (kube-router) stays enabled; the
+# isolation tests depend on it.
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: fleetdeck
+servers: 1
+agents: 0
+# Explicit subnet: machines with many Docker networks run out of default address
+# pools. Change it if 10.203.0.0/24 is already routed on your host.
+subnet: 10.203.0.0/24
+ports:
+  # Web app and API through the bundled Traefik ingress.
+  - port: 127.0.0.1:8090:80
+    nodeFilters:
+      - loadbalancer
+options:
+  k3d:
+    wait: true
+    timeout: 180s
+  k3s:
+    extraArgs:
+      - arg: --disable=metrics-server
+        nodeFilters:
+          - server:*
+  kubeconfig:
+    updateDefaultKubeconfig: false
+    switchCurrentContext: false
