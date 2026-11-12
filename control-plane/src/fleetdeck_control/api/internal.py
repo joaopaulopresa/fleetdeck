@@ -6,13 +6,12 @@ Protected by the internal token and, in the cluster, by network policy.
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, status
-from fleetdeck_common.errors import AuthenticationError
+from fleetdeck_common.errors import NotFoundError
 from fleetdeck_common.identity import Identity, RunContext
-from fleetdeck_common.tokens import hash_token
 from pydantic import BaseModel
-from sqlalchemy import select
 
 from fleetdeck_control import audit
+from fleetdeck_control.access import authorize_tool, resolve_caller
 from fleetdeck_control.auth import Context, internal_caller
 from fleetdeck_control.models import (
     DATA_CLASSES,
@@ -70,6 +69,45 @@ class AuditIn(BaseModel):
     detail: dict[str, Any] = {}
 
 
+class AuthorizeIn(BaseModel):
+    """A connector asks whether the agent behind ``token`` may use ``tool``."""
+
+    token: str
+    system: str
+    tool: str
+    #: The case the record belongs to, when it belongs to one.
+    case_id: str | None = None
+    #: A short label of the record, for the audit trail.
+    record: str = ""
+
+
+class AuthorizeOut(BaseModel):
+    """The decision, with who asked."""
+
+    allowed: bool
+    reason: str
+    identity: Identity
+    context: RunContext
+
+
+class ApprovalIn(BaseModel):
+    """A draft waiting for its person."""
+
+    agent_id: str
+    system: str
+    ref: str
+    title: str
+    body: str = ""
+    case_id: str | None = None
+    detail: dict[str, Any] = {}
+
+
+class ApprovalCreated(BaseModel):
+    """The id of the new approval."""
+
+    id: str
+
+
 class RaiseDataClassIn(BaseModel):
     """A connector returned data of this class into the agent's current session."""
 
@@ -81,30 +119,51 @@ class RaiseDataClassIn(BaseModel):
 @router.post("/identity", response_model=ResolveOut)
 async def resolve_identity(body: ResolveIn, context: Context) -> ResolveOut:
     """Resolve an agent token. Unknown tokens and suspended agents are refused."""
-    column = Agent.model_key_hash if body.kind == "model" else Agent.connector_token_hash
     async with context.db.session() as session:
-        agent = await session.scalar(select(Agent).where(column == hash_token(body.token)))
-        if agent is None or agent.suspended:
-            raise AuthenticationError("unknown or suspended agent")
-        person = await session.get(Person, agent.person_id) if agent.person_id else None
-        run = await session.get(Run, agent.current_run_id) if agent.current_run_id else None
-        session_row = await session.get(AgentSession, run.session_id) if run else None
-    identity = Identity(
-        agent_id=agent.id,
-        person_id=agent.person_id,
-        person_name=person.name if person else None,
-        role=person.role if person else "service",
-        department=person.department if person else None,
+        caller = await resolve_caller(session, body.token, body.kind)
+        return ResolveOut(identity=caller.identity, context=caller.context)
+
+
+@router.post("/authorize", response_model=AuthorizeOut)
+async def authorize(body: AuthorizeIn, context: Context) -> AuthorizeOut:
+    """Decide and audit one connector call: role permission, then case membership."""
+    async with context.db.session() as session:
+        decision = await authorize_tool(
+            session,
+            token=body.token,
+            system=body.system,
+            tool=body.tool,
+            case_id=body.case_id,
+            record=body.record,
+        )
+    return AuthorizeOut(
+        allowed=decision.allowed,
+        reason=decision.reason,
+        identity=decision.identity,
+        context=decision.context,
     )
-    run_context = RunContext(
-        run_id=run.id if run else None,
-        session_id=run.session_id if run else None,
-        case_id=session_row.case_id if session_row else None,
-        data_class=session_row.data_class if session_row else "general",
-        trigger=run.trigger if run else None,
-        trace_id=run.trace_id if run else None,
-    )
-    return ResolveOut(identity=identity, context=run_context)
+
+
+@router.post("/approvals", response_model=ApprovalCreated)
+async def create_approval(body: ApprovalIn, context: Context) -> ApprovalCreated:
+    """Register a draft that an agent prepared in a system and its person must confirm."""
+    async with context.db.session() as session:
+        agent = await session.get(Agent, body.agent_id)
+        if agent is None or agent.person_id is None:
+            raise NotFoundError("agent has no person to confirm drafts")
+        approval = await context.approvals.create(
+            session,
+            kind="draft",
+            person_id=agent.person_id,
+            agent_id=agent.id,
+            case_id=body.case_id,
+            system=body.system,
+            ref=body.ref,
+            title=body.title,
+            body=body.body,
+            detail=body.detail,
+        )
+    return ApprovalCreated(id=approval.id)
 
 
 @router.post("/model-calls", status_code=status.HTTP_204_NO_CONTENT)
