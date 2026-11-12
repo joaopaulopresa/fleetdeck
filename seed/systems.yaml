@@ -1,0 +1,76 @@
+# Systems agents reach through connectors, the class of the data they hold, and which role may
+# use which tool. Scope "all": any record. Scope "case": only records of a case the person is a
+# member of. Loaded once; administrators change permissions in the console afterwards.
+- name: patient-record
+  title: Patient record
+  description: Charts, encounters, notes and results. Holds patient data.
+  data_class: restricted
+  tools:
+    list_my_patients: {physician: all}
+    get_patient_summary: {physician: case}
+    get_encounter_note: {physician: case}
+    draft_clinical_note: {physician: case}
+
+- name: billing
+  title: Billing and claims
+  description: Claims, denials and appeals.
+  data_class: confidential
+  tools:
+    list_denials: {biller: all}
+    get_claim: {biller: all, lawyer: case, tax-analyst: case}
+    file_appeal_draft: {biller: all}
+    denial_summary: {biller: all, director: all}
+
+- name: erp
+  title: ERP and invoices
+  description: Revenue ledger, month-end close and the tax engine.
+  data_class: confidential
+  tools:
+    get_revenue_entry: {tax-analyst: all}
+    flag_disputed_draft: {tax-analyst: all}
+    run_tax_engine: {tax-analyst: all}
+    month_end_status: {tax-analyst: all, director: all}
+
+- name: docket
+  title: Docket
+  description: Legal matters, deadline rules and deadlines.
+  data_class: confidential
+  tools:
+    list_deadline_rules: {lawyer: all}
+    compute_deadline: {lawyer: all}
+    list_matters: {lawyer: all}
+    get_matter: {lawyer: case}
+    open_matter_draft: {lawyer: case}
+    formal_notice_draft: {lawyer: case}
+    list_deadlines: {lawyer: all}
+    docket_summary: {lawyer: all, director: all}
+
+- name: contracts
+  title: Contracts
+  description: Payer and supplier contracts with clause search.
+  data_class: confidential
+  tools:
+    search_contracts: {lawyer: all, biller: all, director: all}
+    get_contract: {lawyer: all, biller: all, director: all}
+    get_clause: {lawyer: all, biller: all, director: all}
+
+- name: knowledge
+  title: Knowledge base
+  description: Templates, protocols and rules, plus the documents of each case. Filtered by row-level security.
+  data_class: general
+  tools:
+    search_knowledge: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    get_document: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    draft_case_document: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+
+- name: fleet
+  title: Requests between agents
+  description: Typed requests to colleagues' agents, checked against policy and approved by people.
+  data_class: general
+  tools:
+    list_colleagues: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    my_cases: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    send_request: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    inbox: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    get_request: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
+    reply: {physician: all, biller: all, lawyer: all, tax-analyst: all, director: all}
