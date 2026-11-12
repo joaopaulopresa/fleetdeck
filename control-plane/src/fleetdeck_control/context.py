@@ -8,10 +8,12 @@ from fleetdeck_control.agents.activator import Activator
 from fleetdeck_control.agents.reaper import IdleReaper
 from fleetdeck_control.agents.service import AgentService
 from fleetdeck_control.approvals import ApprovalService, DraftConfirmer, HttpDraftConfirmer
+from fleetdeck_control.broker import Broker
 from fleetdeck_control.cluster import AgentCluster, FakeAgentCluster, KubernetesAgentCluster
 from fleetdeck_control.db import Database
 from fleetdeck_control.hermes import HermesClient, HttpHermesClient
 from fleetdeck_control.runs import RunService
+from fleetdeck_control.scheduler import Scheduler
 from fleetdeck_control.settings import Settings
 
 
@@ -28,6 +30,8 @@ class AppContext:
     reaper: IdleReaper
     runs: RunService
     approvals: ApprovalService
+    broker: Broker
+    scheduler: Scheduler
 
 
 def build_context(
@@ -48,13 +52,16 @@ def build_context(
             )
     if hermes is None:
         hermes = HttpHermesClient(settings, run_timeout=settings.run_timeout_seconds)
-    agents = AgentService(db, cluster)
+    agents = AgentService(db, cluster, settings.bundles_dir)
     activator = Activator(db, cluster, hermes, agents, settings)
     reaper = IdleReaper(db, activator, agents, settings)
     runs = RunService(db, activator, hermes, cluster, settings)
     approvals = ApprovalService(
         db, confirmer or HttpDraftConfirmer(settings.systems_url, settings.internal_token)
     )
+    broker = Broker(db, runs, approvals)
+    approvals.replies = broker
+    scheduler = Scheduler(db, runs, settings)
     return AppContext(
         settings=settings,
         db=db,
@@ -65,6 +72,8 @@ def build_context(
         reaper=reaper,
         runs=runs,
         approvals=approvals,
+        broker=broker,
+        scheduler=scheduler,
     )
 
 

@@ -141,15 +141,12 @@ class ApprovalService:
             if approval.status != "pending":
                 raise ConflictError(f"already {approval.status}")
             final_body = body if body is not None else approval.body
-            if approve:
-                await self._apply(session, approval, person.id, final_body)
-            else:
-                await self._drop(session, approval, person.id)
             approval.body = final_body
             approval.status = "approved" if approve else "declined"
             approval.decided_at = datetime.now(UTC)
             waited = (approval.decided_at - approval.created_at).total_seconds()
             metrics.APPROVAL_SECONDS.observe(max(waited, 0.0))
+            # Recorded before the effect, so the trail reads: decided, then what it caused.
             await audit.record(
                 session,
                 kind="approval",
@@ -162,6 +159,10 @@ class ApprovalService:
                 summary=f"{person.name} {'confirmed' if approve else 'declined'}: {approval.title}",
                 detail={"ref": approval.ref, "edited": body is not None},
             )
+            if approve:
+                await self._apply(session, approval, person.id, final_body)
+            else:
+                await self._drop(session, approval, person.id)
         return approval
 
     async def _apply(

@@ -17,7 +17,9 @@ from fleetdeck_control.auth import Context, internal_caller
 from fleetdeck_control.models import (
     DATA_CLASSES,
     Agent,
+    AgentRequest,
     AgentSession,
+    Case,
     CaseMember,
     ModelCall,
     Person,
@@ -110,6 +112,34 @@ class ApprovalCreated(BaseModel):
     id: str
 
 
+class FleetIn(BaseModel):
+    """The calling agent's connector token."""
+
+    token: str
+
+
+class FleetSendIn(FleetIn):
+    """A request to a colleague's agent."""
+
+    to_person: str
+    request_type: str
+    case_id: str
+    subject: str
+    body: str
+
+
+class FleetRequestIn(FleetIn):
+    """A request id."""
+
+    request_id: str
+
+
+class FleetReplyIn(FleetRequestIn):
+    """A reply to a request."""
+
+    body: str
+
+
 class RaiseDataClassIn(BaseModel):
     """A connector returned data of this class into the agent's current session."""
 
@@ -157,6 +187,121 @@ async def member_cases(body: ResolveIn, context: Context) -> list[str]:
             select(CaseMember.case_id).where(CaseMember.person_id == caller.agent.person_id)
         )
         return sorted(rows.all())
+
+
+def _request_view(request: AgentRequest) -> dict[str, Any]:
+    return {
+        "request_id": request.id,
+        "type": request.type,
+        "status": request.status,
+        "from_person": request.from_person,
+        "to_person": request.to_person,
+        "case_id": request.case_id,
+        "subject": request.subject,
+        "body": request.body,
+        "reply": request.reply_body if request.status == "answered" else None,
+        "reason": request.reason,
+    }
+
+
+@router.post("/fleet/colleagues")
+async def fleet_colleagues(body: FleetIn, context: Context) -> list[dict[str, Any]]:
+    """List the colleagues who have an agent, for addressing requests."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, "connector")
+        rows = (
+            (
+                await session.execute(
+                    select(Person)
+                    .join(Agent, Agent.person_id == Person.id)
+                    .where(Agent.suspended.is_(False))
+                    .order_by(Person.name)
+                )
+            )
+            .scalars()
+            .all()
+        )
+    return [
+        {
+            "person_id": p.id,
+            "name": p.name,
+            "title": p.title,
+            "department": p.department,
+            "role": p.role,
+        }
+        for p in rows
+        if p.id != caller.agent.person_id
+    ]
+
+
+@router.post("/fleet/cases")
+async def fleet_cases(body: FleetIn, context: Context) -> list[dict[str, Any]]:
+    """List the cases the agent's person belongs to."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, "connector")
+        rows = (
+            (
+                await session.execute(
+                    select(Case)
+                    .join(CaseMember, CaseMember.case_id == Case.id)
+                    .where(CaseMember.person_id == caller.agent.person_id)
+                    .order_by(Case.id)
+                )
+            )
+            .scalars()
+            .all()
+        )
+    return [
+        {
+            "case_id": c.id,
+            "kind": c.kind,
+            "title": c.title,
+            "summary": c.summary,
+            "data_class": c.data_class,
+        }
+        for c in rows
+    ]
+
+
+@router.post("/fleet/send")
+async def fleet_send(body: FleetSendIn, context: Context) -> dict[str, Any]:
+    """Send a typed request through the broker."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, "connector")
+    request = await context.broker.send(
+        caller,
+        to_person=body.to_person,
+        request_type=body.request_type,
+        case_id=body.case_id,
+        subject=body.subject,
+        body=body.body,
+    )
+    return _request_view(request)
+
+
+@router.post("/fleet/inbox")
+async def fleet_inbox(body: FleetIn, context: Context) -> list[dict[str, Any]]:
+    """List the requests waiting for the agent's reply."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, "connector")
+    return [_request_view(r) for r in await context.broker.inbox(caller)]
+
+
+@router.post("/fleet/request")
+async def fleet_request(body: FleetRequestIn, context: Context) -> dict[str, Any]:
+    """Return a request the agent sent or received."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, "connector")
+    return _request_view(await context.broker.get(caller, body.request_id))
+
+
+@router.post("/fleet/reply")
+async def fleet_reply(body: FleetReplyIn, context: Context) -> dict[str, Any]:
+    """Record the agent's reply to a request addressed to it."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, "connector")
+    request = await context.broker.reply(caller, body.request_id, body.body)
+    return {"request_id": request.id, "status": request.status}
 
 
 @router.post("/approvals", response_model=ApprovalCreated)
