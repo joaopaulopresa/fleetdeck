@@ -6,6 +6,7 @@ requires-python = ">=3.13"
 dependencies = [
     "fleetdeck-common",
     "fastapi>=0.120",
+    "langfuse>=3.9",
     "prometheus-client>=0.23",
     "uvicorn>=0.38",
 ]
