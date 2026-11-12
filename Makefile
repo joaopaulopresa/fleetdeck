@@ -8,7 +8,7 @@ HERMES_IMAGE ?= nousresearch/hermes-agent:stable
 export KUBECONFIG := $(CURDIR)/.dev-kubeconfig
 
 .DEFAULT_GOAL := help
-.PHONY: help cluster images up deploy down status lint typecheck test test-cluster test-live
+.PHONY: help cluster images up deploy down status lint typecheck test test-cluster test-live test-e2e demo
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  %-14s %s\n", $$1, $$2}'
@@ -63,3 +63,10 @@ test-cluster: ## Isolation and scale-to-zero tests against the running k3d clust
 
 test-live: ## Cluster tests that call a real model through OpenRouter (costs a fraction of a cent)
 	uv run pytest -m live tests/cluster
+
+test-e2e: ## Playwright tests of the web app against the running cluster (no model calls)
+	cd e2e && pnpm install --silent && pnpm exec playwright test --project=tests
+
+demo: ## Record the four demo videos against the cluster (real model calls) and render them
+	cd e2e && pnpm install --silent && pnpm exec playwright test --project=demo
+	uv run python e2e/demo/render.py

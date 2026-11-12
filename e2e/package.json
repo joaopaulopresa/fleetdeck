@@ -1,0 +1,16 @@
+{
+  "name": "fleetdeck-e2e",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test --project=tests",
+    "screens": "playwright test --project=screens",
+    "demo": "playwright test --project=demo"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.0",
+    "typescript": "^5.9.3"
+  }
+}

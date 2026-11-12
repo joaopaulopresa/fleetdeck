@@ -4,5 +4,6 @@
   {"id": "priya-nair", "name": "Priya Nair", "email": "priya.nair@meridian-health.example", "title": "Litigation Lawyer", "role": "lawyer", "department": "Legal", "is_admin": false, "bundle": "lawyer"},
   {"id": "tom-becker", "name": "Tom Becker", "email": "tom.becker@meridian-health.example", "title": "Tax Analyst", "role": "tax-analyst", "department": "Tax", "is_admin": false, "bundle": "tax-analyst"},
   {"id": "sofia-lindqvist", "name": "Sofia Lindqvist", "email": "sofia.lindqvist@meridian-health.example", "title": "Operations Director", "role": "director", "department": "Operations", "is_admin": false, "bundle": "director"},
+  {"id": "nora-castellanos", "name": "Nora Castellanos", "email": "nora.castellanos@meridian-health.example", "title": "Medical Biller (new hire)", "role": "biller", "department": "Revenue Cycle", "is_admin": false, "bundle": null},
   {"id": "dana-whitfield", "name": "Dana Whitfield", "email": "dana.whitfield@meridian-health.example", "title": "Platform Administrator", "role": "platform-admin", "department": "IT", "is_admin": true, "bundle": null}
 ]
