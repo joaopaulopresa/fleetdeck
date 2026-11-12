@@ -5,6 +5,7 @@ description = "One isolated, scale-to-zero AI agent per employee on Kubernetes"
 requires-python = ">=3.13"
 dependencies = [
     "fleetdeck-common",
+    "fleetdeck-connectors",
     "fleetdeck-control",
     "fleetdeck-egress",
     "fleetdeck-mock",
@@ -16,10 +17,11 @@ dependencies = [
 package = false
 
 [tool.uv.workspace]
-members = ["common", "control-plane", "operator", "model-gateway", "egress-proxy", "mock-systems"]
+members = ["common", "control-plane", "operator", "model-gateway", "egress-proxy", "mock-systems", "connectors"]
 
 [tool.uv.sources]
 fleetdeck-common = { workspace = true }
+fleetdeck-connectors = { workspace = true }
 fleetdeck-control = { workspace = true }
 fleetdeck-egress = { workspace = true }
 fleetdeck-mock = { workspace = true }
@@ -63,11 +65,12 @@ mypy_path = [
     "model-gateway/src",
     "egress-proxy/src",
     "mock-systems/src",
+    "connectors/src",
 ]
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
-module = ["kubernetes.*", "kopf.*", "testcontainers.*", "croniter.*"]
+module = ["kubernetes.*", "kopf.*", "testcontainers.*", "croniter.*", "asyncpg.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

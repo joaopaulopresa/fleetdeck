@@ -14,6 +14,8 @@ async def test_sign_in_lists_demo_people_and_rejects_unknown(client: httpx.Async
         "elena-park",
         "marcus-reyes",
         "priya-nair",
+        "tom-becker",
+        "sofia-lindqvist",
         "dana-whitfield",
     }
     assert (await client.post("/api/auth/login", json={"person_id": "nobody"})).status_code == 404
