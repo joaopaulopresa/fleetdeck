@@ -1,0 +1,67 @@
+[project]
+name = "fleetdeck"
+version = "0.1.0"
+description = "One isolated, scale-to-zero AI agent per employee on Kubernetes"
+requires-python = ">=3.13"
+dependencies = [
+    "fleetdeck-common",
+    "fleetdeck-control",
+    "fleetdeck-gateway",
+    "fleetdeck-operator",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["common", "control-plane", "operator", "model-gateway"]
+
+[tool.uv.sources]
+fleetdeck-common = { workspace = true }
+fleetdeck-control = { workspace = true }
+fleetdeck-gateway = { workspace = true }
+fleetdeck-operator = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18",
+    "pytest>=8.4",
+    "pytest-asyncio>=1.2",
+    "respx>=0.22",
+    "ruff>=0.14",
+    "testcontainers[postgres]>=4.13",
+    "types-pyyaml",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "SIM", "RUF", "ASYNC", "S", "D"]
+ignore = ["D203", "D213", "D105", "D107", "S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["D", "S"]
+"**/migrations/**" = ["D"]
+
+[tool.mypy]
+strict = true
+python_version = "3.13"
+plugins = ["pydantic.mypy"]
+mypy_path = ["common/src", "control-plane/src", "operator/src", "model-gateway/src"]
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = ["kubernetes.*", "kopf.*", "testcontainers.*", "croniter.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+markers = [
+    "cluster: needs a k3d cluster (run with make test-cluster)",
+    "live: calls a real model through OpenRouter",
+]
+addopts = "-m 'not cluster and not live' -q"

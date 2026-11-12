@@ -12,3 +12,7 @@ playwright-report/
 .ruff_cache/
 *.tsbuildinfo
 coverage/
+.mypy_cache/
+*.egg-info/
+.dev-kubeconfig
+e2e/demo/output/
