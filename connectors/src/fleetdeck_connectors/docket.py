@@ -24,7 +24,7 @@ def tools(deps: Deps) -> list[Tool]:
 
         Args:
             rule: A rule key from list_deadline_rules, for example notice_of_dispute.
-            event_date: The date of the triggering event as YYYY-MM-DD.
+            event_date: The date of the triggering event as YYYY-MM-DD, or "today".
 
         """
         await deps.allow("compute_deadline", record=f"{rule} from {event_date}")

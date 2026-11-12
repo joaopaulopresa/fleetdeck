@@ -4,7 +4,7 @@ from typing import Any
 
 import httpx
 
-from fleetdeck_common.errors import AuthenticationError, UpstreamError
+from fleetdeck_common.errors import AuthenticationError, NotFoundError, UpstreamError
 from fleetdeck_common.identity import Decision, Identity, RunContext
 from fleetdeck_common.settings import CommonSettings
 
@@ -70,6 +70,17 @@ class ControlPlaneClient:
         if response.status_code != 200:
             raise UpstreamError(f"control plane: {response.status_code} {response.text[:200]}")
         return str(response.json()["id"])
+
+    async def fleet(self, action: str, token: str, **body: Any) -> Any:
+        """Call a broker endpoint (``/internal/fleet/<action>``) as the agent behind ``token``."""
+        response = await self._post(f"/internal/fleet/{action}", {"token": token, **body})
+        if response.status_code == 401:
+            raise AuthenticationError("unknown or suspended agent")
+        if response.status_code == 404:
+            raise NotFoundError(str(response.json().get("detail", "not found")))
+        if response.status_code >= 400:
+            raise UpstreamError(str(response.json().get("detail", response.text[:200])))
+        return response.json()
 
     async def record_model_call(self, **fields: Any) -> None:
         """Report a finished model call for attribution and audit."""

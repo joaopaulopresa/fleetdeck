@@ -325,3 +325,54 @@ async def test_a_forged_or_suspended_token_gets_nowhere(world: World) -> None:
     assert await verifier.verify_token(world.tokens["marcus-reyes"]) is None
     with pytest.raises(AuthenticationError):
         await world.tools("marcus-reyes", "billing")["list_denials"]()
+
+
+async def test_fleet_tools_send_through_the_broker_and_report_refusals(world: World) -> None:
+    from fleetdeck_connectors import fleet
+    from fleetdeck_control.seed import seed_policies
+
+    await seed_policies(world.context, _load(SEED, "policies.yaml"))
+
+    def toolbox(person: str) -> Toolbox:
+        deps = Deps(
+            system="fleet",
+            control=world.control,
+            systems=world.systems,
+            token=lambda: world.tokens[person],
+        )
+        return {tool.__name__: tool for tool in fleet.tools(deps, world.control)}
+
+    marcus, priya, elena = toolbox("marcus-reyes"), toolbox("priya-nair"), toolbox("elena-park")
+    colleagues = (await marcus["list_colleagues"]())["colleagues"]
+    assert "marcus-reyes" not in {c["person_id"] for c in colleagues} and len(colleagues) == 4
+    assert {c["case_id"] for c in (await marcus["my_cases"]())["cases"]} == {
+        "dn-clm-2026-01187",
+        "dn-clm-2026-00672",
+    }
+
+    sent = await marcus["send_request"](
+        "elena-park",
+        "ask_information",
+        "dn-clm-2026-01187",
+        "Clinical justification",
+        "For the appeal of CLM-2026-01187.",
+    )
+    assert sent["status"] == "delivered"
+    for _ in range(50):
+        if (await elena["inbox"]())["requests"]:
+            break
+    [waiting] = (await elena["inbox"]())["requests"]
+    assert waiting["request_id"] == sent["request_id"]
+    held = await elena["reply"](sent["request_id"], "Meets the guideline criteria.")
+    assert held["status"] == "awaiting_approval" and "held" in held["message"]
+    assert (await marcus["get_request"](sent["request_id"]))["reply"] is None
+
+    refused = await priya["send_request"](
+        "elena-park",
+        "ask_information",
+        "dn-clm-2026-00672",
+        "Chart please",
+        "Send the patient's record.",
+    )
+    assert refused["status"] == "denied" and refused["reason"].startswith("policy:")
+    assert (await priya["get_request"](sent["request_id"]))["error"] == "not found"

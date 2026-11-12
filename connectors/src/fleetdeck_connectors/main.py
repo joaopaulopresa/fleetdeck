@@ -5,7 +5,15 @@ import argparse
 from fleetdeck_common.control_client import ControlPlaneClient
 from fleetdeck_common.logs import configure_logging
 
-from fleetdeck_connectors import billing, contracts, docket, erp, knowledge, patient_record
+from fleetdeck_connectors import (
+    billing,
+    contracts,
+    docket,
+    erp,
+    fleet,
+    knowledge,
+    patient_record,
+)
 from fleetdeck_connectors.base import Deps, SystemsClient, Tool, build_server
 from fleetdeck_connectors.settings import ConnectorSettings, get_settings
 
@@ -16,13 +24,18 @@ SYSTEMS = {
     "docket": docket,
     "contracts": contracts,
     "knowledge": knowledge,
+    "fleet": fleet,
 }
 
 
-def tools_for(system: str, deps: Deps, settings: ConnectorSettings) -> list[Tool]:
+def tools_for(
+    system: str, deps: Deps, settings: ConnectorSettings, control: ControlPlaneClient
+) -> list[Tool]:
     """Return the tools of one connector."""
     if system == "knowledge":
         return knowledge.tools(deps, knowledge.ScopedDatabase(settings.scoped_database_url))
+    if system == "fleet":
+        return fleet.tools(deps, control)
     module = SYSTEMS[system]
     return module.tools(deps)  # type: ignore[no-any-return]
 
@@ -43,7 +56,7 @@ def main() -> None:
     server = build_server(
         args.system,
         SYSTEMS[args.system].INSTRUCTIONS,
-        tools_for(args.system, deps, settings),
+        tools_for(args.system, deps, settings, control),
         control=control,
         public_url=settings.public_url,
     )

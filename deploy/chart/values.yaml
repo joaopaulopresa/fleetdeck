@@ -57,7 +57,7 @@ langfuse:
     minio: cgr.dev/chainguard/minio:latest-dev
 
 # One MCP connector is deployed for each name. Role bundles list the connectors an agent gets.
-connectors: [patient-record, billing, erp, docket, contracts, knowledge]
+connectors: [patient-record, billing, erp, docket, contracts, knowledge, fleet]
 
 demo:
   # The corporate systems' "today", so that deadlines and periods match the recorded demo.
