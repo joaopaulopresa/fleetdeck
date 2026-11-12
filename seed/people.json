@@ -1,0 +1,8 @@
+[
+  {"id": "elena-park", "name": "Dr. Elena Park", "email": "elena.park@meridian-health.example", "title": "Physician, Internal Medicine", "role": "physician", "department": "Clinical", "is_admin": false, "bundle": "physician"},
+  {"id": "marcus-reyes", "name": "Marcus Reyes", "email": "marcus.reyes@meridian-health.example", "title": "Medical Biller", "role": "biller", "department": "Revenue Cycle", "is_admin": false, "bundle": "biller"},
+  {"id": "priya-nair", "name": "Priya Nair", "email": "priya.nair@meridian-health.example", "title": "Litigation Lawyer", "role": "lawyer", "department": "Legal", "is_admin": false, "bundle": "lawyer"},
+  {"id": "tom-becker", "name": "Tom Becker", "email": "tom.becker@meridian-health.example", "title": "Tax Analyst", "role": "tax-analyst", "department": "Tax", "is_admin": false, "bundle": "tax-analyst"},
+  {"id": "sofia-lindqvist", "name": "Sofia Lindqvist", "email": "sofia.lindqvist@meridian-health.example", "title": "Operations Director", "role": "director", "department": "Operations", "is_admin": false, "bundle": "director"},
+  {"id": "dana-whitfield", "name": "Dana Whitfield", "email": "dana.whitfield@meridian-health.example", "title": "Platform Administrator", "role": "platform-admin", "department": "IT", "is_admin": true, "bundle": null}
+]
