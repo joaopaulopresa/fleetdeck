@@ -5,7 +5,7 @@ from typing import Any
 import httpx
 
 from fleetdeck_common.errors import AuthenticationError, UpstreamError
-from fleetdeck_common.identity import Identity, RunContext
+from fleetdeck_common.identity import Decision, Identity, RunContext
 from fleetdeck_common.settings import CommonSettings
 
 
@@ -39,6 +39,37 @@ class ControlPlaneClient:
             raise UpstreamError(f"control plane: {response.status_code}")
         body = response.json()
         return Identity.model_validate(body["identity"]), RunContext.model_validate(body["context"])
+
+    async def authorize(
+        self, token: str, system: str, tool: str, *, case_id: str | None = None, record: str = ""
+    ) -> Decision:
+        """Ask whether the agent behind ``token`` may use ``tool``; the answer is audited.
+
+        Raises :class:`AuthenticationError` for unknown tokens and suspended agents.
+        """
+        response = await self._post(
+            "/internal/authorize",
+            {"token": token, "system": system, "tool": tool, "case_id": case_id, "record": record},
+        )
+        if response.status_code == 401:
+            raise AuthenticationError("unknown or suspended agent")
+        if response.status_code != 200:
+            raise UpstreamError(f"control plane: {response.status_code}")
+        return Decision.model_validate(response.json())
+
+    async def member_cases(self, token: str) -> list[str]:
+        """Return the ids of the cases the agent's person belongs to."""
+        response = await self._post("/internal/member-cases", {"token": token, "kind": "connector"})
+        if response.status_code != 200:
+            raise UpstreamError(f"control plane: {response.status_code}")
+        return [str(case_id) for case_id in response.json()]
+
+    async def create_approval(self, **fields: Any) -> str:
+        """Register a draft that the agent's person must confirm; return the approval id."""
+        response = await self._post("/internal/approvals", fields)
+        if response.status_code != 200:
+            raise UpstreamError(f"control plane: {response.status_code} {response.text[:200]}")
+        return str(response.json()["id"])
 
     async def record_model_call(self, **fields: Any) -> None:
         """Report a finished model call for attribution and audit."""

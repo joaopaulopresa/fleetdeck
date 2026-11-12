@@ -3,8 +3,7 @@ from fleetdeck_common.tokens import hash_token
 from fleetdeck_control.cluster import FakeAgentCluster
 from fleetdeck_control.context import AppContext
 from fleetdeck_control.models import Agent
-
-from .conftest import sign_in
+from fleetdeck_control.testing import sign_in
 
 NEW = {"agent_id": "elena-park", "person_id": "elena-park", "bundle": "physician"}
 

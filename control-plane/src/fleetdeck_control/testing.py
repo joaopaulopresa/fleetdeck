@@ -1,10 +1,16 @@
-"""Fixtures: a real PostgreSQL in a container, and the app wired to fake cluster and Hermes."""
+"""Test support: fakes for the cluster edge and pytest fixtures with a real PostgreSQL.
+
+Loaded as a pytest plugin by the repository's ``conftest.py`` so that every package's tests can
+run against the real control-plane application.
+"""
 
 from collections.abc import AsyncIterator, Iterator
 from typing import Any
 
 import httpx
 import pytest
+from sqlalchemy import text
+
 from fleetdeck_control.cli import migrate
 from fleetdeck_control.cluster import FakeAgentCluster
 from fleetdeck_control.context import AppContext, build_context
@@ -12,8 +18,6 @@ from fleetdeck_control.hermes import RunEvent
 from fleetdeck_control.main import create_app
 from fleetdeck_control.models import Person
 from fleetdeck_control.settings import Settings
-from sqlalchemy import text
-from testcontainers.community.postgres import PostgresContainer
 
 PEOPLE = [
     Person(
@@ -118,6 +122,8 @@ class FakeConfirmer:
 
 @pytest.fixture(scope="session")
 def database_url() -> Iterator[str]:
+    from testcontainers.community.postgres import PostgresContainer
+
     with PostgresContainer("pgvector/pgvector:pg16", driver="asyncpg") as postgres:
         url = postgres.get_connection_url()
         migrate(url)

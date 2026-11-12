@@ -30,3 +30,12 @@ class RunContext(BaseModel):
     data_class: str = "general"
     trigger: str | None = None
     trace_id: str | None = None
+
+
+class Decision(BaseModel):
+    """The control plane's answer to "may this agent use this tool on this record?"."""
+
+    allowed: bool
+    reason: str
+    identity: Identity
+    context: RunContext

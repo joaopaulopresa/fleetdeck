@@ -47,6 +47,8 @@ ignore = ["D203", "D213", "D105", "D107", "S101"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["D", "S"]
+"**/testing.py" = ["D", "S"]
+"conftest.py" = ["D"]
 "**/migrations/**" = ["D", "S608"]
 "seed/generate.py" = ["E501"]
 

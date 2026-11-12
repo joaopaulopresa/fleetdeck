@@ -8,10 +8,9 @@ from fleetdeck_control.agents.service import NewAgent
 from fleetdeck_control.context import AppContext
 from fleetdeck_control.models import AgentSession, AuditEvent, Case, KbDocument
 from fleetdeck_control.seed import seed_access, seed_cases, seed_knowledge
+from fleetdeck_control.testing import FakeConfirmer, sign_in
 from sqlalchemy import select, text
 from sqlalchemy.exc import DBAPIError
-
-from .conftest import FakeConfirmer, sign_in
 
 INTERNAL = {"Authorization": "Bearer internal-test-token"}
 SYSTEMS = [

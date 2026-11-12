@@ -6,9 +6,8 @@ from fleetdeck_control.agents.service import NewAgent
 from fleetdeck_control.cluster import FakeAgentCluster
 from fleetdeck_control.context import AppContext
 from fleetdeck_control.models import Agent, AuditEvent
+from fleetdeck_control.testing import FakeHermes
 from sqlalchemy import select, text
-
-from .conftest import FakeHermes
 
 
 async def _agent(context: AppContext, agent_id: str = "elena-park") -> Agent:

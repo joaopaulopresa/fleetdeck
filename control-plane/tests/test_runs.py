@@ -5,9 +5,8 @@ from fleetdeck_control.agents.service import NewAgent
 from fleetdeck_control.context import AppContext
 from fleetdeck_control.hermes import RunEvent
 from fleetdeck_control.models import Agent, AuditEvent, ModelCall
+from fleetdeck_control.testing import FakeHermes, sign_in
 from sqlalchemy import select
-
-from .conftest import FakeHermes, sign_in
 
 INTERNAL = {"Authorization": "Bearer internal-test-token"}
 

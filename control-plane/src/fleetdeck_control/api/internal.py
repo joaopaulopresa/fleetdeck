@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, status
 from fleetdeck_common.errors import NotFoundError
 from fleetdeck_common.identity import Identity, RunContext
 from pydantic import BaseModel
+from sqlalchemy import select
 
 from fleetdeck_control import audit
 from fleetdeck_control.access import authorize_tool, resolve_caller
@@ -17,6 +18,7 @@ from fleetdeck_control.models import (
     DATA_CLASSES,
     Agent,
     AgentSession,
+    CaseMember,
     ModelCall,
     Person,
     Run,
@@ -142,6 +144,19 @@ async def authorize(body: AuthorizeIn, context: Context) -> AuthorizeOut:
         identity=decision.identity,
         context=decision.context,
     )
+
+
+@router.post("/member-cases", response_model=list[str])
+async def member_cases(body: ResolveIn, context: Context) -> list[str]:
+    """Return the ids of the cases the agent's person is a member of."""
+    async with context.db.session() as session:
+        caller = await resolve_caller(session, body.token, body.kind)
+        if caller.agent.person_id is None:
+            return []
+        rows = await session.scalars(
+            select(CaseMember.case_id).where(CaseMember.person_id == caller.agent.person_id)
+        )
+        return sorted(rows.all())
 
 
 @router.post("/approvals", response_model=ApprovalCreated)
