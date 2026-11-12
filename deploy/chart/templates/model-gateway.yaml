@@ -51,6 +51,10 @@ spec:
                 secretKeyRef: {name: provider-key, key: OPENROUTER_API_KEY}
             - {name: FLEET_DEFAULT_MODEL, value: {{ .Values.models.default | quote }}}
             - {name: FLEET_RESTRICTED_MODEL, value: {{ .Values.models.restricted | quote }}}
+            - {name: FLEET_RESTRICTED_UPSTREAM_URL, value: {{ .Values.models.restrictedUpstreamUrl | quote }}}
+            - name: FLEET_RESTRICTED_API_KEY
+              valueFrom:
+                secretKeyRef: {name: provider-key, key: RESTRICTED_API_KEY}
             {{- if .Values.langfuse.enabled }}
             - {name: FLEET_LANGFUSE_HOST, value: "http://langfuse-web:3000"}
             - name: FLEET_LANGFUSE_PUBLIC_KEY

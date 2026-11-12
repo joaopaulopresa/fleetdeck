@@ -23,10 +23,15 @@ agents:
 models:
   default: deepseek/deepseek-v4.1-flash-1017
   restricted: google/gemma-4-26b-a4b-it
+  # Where restricted data goes. Empty: the same provider as the default route, which is only
+  # acceptable with synthetic data. With real patient data, set an OpenAI-compatible endpoint
+  # hosted by the company (and its key in secrets.restrictedApiKey).
+  restrictedUpstreamUrl: ""
 
 secrets:
   # Passed by `make up` from .env; never committed.
   openrouterApiKey: ""
+  restrictedApiKey: ""
 
 postgres:
   storage: 2Gi
