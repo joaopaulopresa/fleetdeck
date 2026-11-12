@@ -15,7 +15,7 @@ from sqlalchemy import (
     Text,
     func,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from fleetdeck_control.db import Base
@@ -179,3 +179,106 @@ class ModelCall(Base):
     latency_ms: Mapped[int] = mapped_column(Integer, default=0)
     status: Mapped[int] = mapped_column(Integer, default=200)
     trace_id: Mapped[str | None] = mapped_column(String(64))
+
+
+class Case(Base):
+    """A case space: a patient episode, a claim dispute, a legal matter, a tax portfolio.
+
+    Documents, requests and history belong to the case, not to a person. Row-level security
+    hides a case, its members and its documents from everyone who is not a member.
+    """
+
+    __tablename__ = "cases"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    #: patient_episode | claim_dispute | legal_matter | tax_portfolio
+    kind: Mapped[str] = mapped_column(String(30))
+    title: Mapped[str] = mapped_column(String(200))
+    summary: Mapped[str] = mapped_column(Text, default="")
+    data_class: Mapped[str] = mapped_column(String(20), default="confidential")
+    status: Mapped[str] = mapped_column(String(20), default="open")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CaseMember(Base):
+    """A person's membership of a case."""
+
+    __tablename__ = "case_members"
+
+    case_id: Mapped[str] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"), primary_key=True
+    )
+    person_id: Mapped[str] = mapped_column(
+        ForeignKey("people.id", ondelete="CASCADE"), primary_key=True
+    )
+    #: owner | member
+    role_in_case: Mapped[str] = mapped_column(String(20), default="member")
+    added_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class KbDocument(Base):
+    """A knowledge-base document: shared reference material, or a document of one case."""
+
+    __tablename__ = "kb_documents"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    case_id: Mapped[str | None] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"))
+    title: Mapped[str] = mapped_column(String(200))
+    #: template | protocol | rule | dossier | notice | note
+    kind: Mapped[str] = mapped_column(String(30))
+    data_class: Mapped[str] = mapped_column(String(20), default="general")
+    #: For documents without a case: the roles that may read it. Empty means everyone.
+    audience_roles: Mapped[list[str]] = mapped_column(ARRAY(String(40)), default=list)
+    body: Mapped[str] = mapped_column(Text)
+    #: published | draft
+    status: Mapped[str] = mapped_column(String(20), default="published")
+    author_person_id: Mapped[str | None] = mapped_column(String(40))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class System(Base):
+    """A system agents reach through a connector, with the class of the data it holds."""
+
+    __tablename__ = "systems"
+
+    name: Mapped[str] = mapped_column(String(40), primary_key=True)
+    title: Mapped[str] = mapped_column(String(80))
+    description: Mapped[str] = mapped_column(Text, default="")
+    data_class: Mapped[str] = mapped_column(String(20), default="confidential")
+
+
+class ToolPermission(Base):
+    """Which role may use which tool of which system, for all records or only within a case."""
+
+    __tablename__ = "tool_permissions"
+
+    system: Mapped[str] = mapped_column(
+        ForeignKey("systems.name", ondelete="CASCADE"), primary_key=True
+    )
+    tool: Mapped[str] = mapped_column(String(60), primary_key=True)
+    role: Mapped[str] = mapped_column(String(40), primary_key=True)
+    #: all: any record. case: only records of a case the person is a member of.
+    scope: Mapped[str] = mapped_column(String(10), default="all")
+
+
+class Approval(Base):
+    """Something an agent prepared that its person must confirm before it takes effect."""
+
+    __tablename__ = "approvals"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    #: draft (a write prepared in a system) | reply (an answer to another agent's request)
+    kind: Mapped[str] = mapped_column(String(20))
+    person_id: Mapped[str] = mapped_column(ForeignKey("people.id"), index=True)
+    agent_id: Mapped[str | None] = mapped_column(String(40))
+    case_id: Mapped[str | None] = mapped_column(String(40))
+    system: Mapped[str] = mapped_column(String(40))
+    #: Id of the draft in its system, or of the request being answered.
+    ref: Mapped[str] = mapped_column(String(60))
+    title: Mapped[str] = mapped_column(String(200))
+    body: Mapped[str] = mapped_column(Text, default="")
+    #: pending | approved | declined
+    status: Mapped[str] = mapped_column(String(20), default="pending", index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    detail: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)

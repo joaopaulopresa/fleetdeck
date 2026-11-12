@@ -12,6 +12,9 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
+#: Database role whose queries are subject to row-level security.
+SCOPED_ROLE = "fleet_scoped"
+
 
 class Base(DeclarativeBase):
     """Declarative base of all control-plane tables."""
@@ -28,15 +31,17 @@ class Database:
     async def session(self, person_id: str | None = None) -> AsyncIterator[AsyncSession]:
         """Open a transaction; commit on success, roll back on error.
 
-        ``person_id`` is published to PostgreSQL as ``app.person_id`` for the transaction, which
-        is what the row-level security policies read. Without it the policies see no person and
-        return no protected rows.
+        With ``person_id`` the transaction runs as the ``fleet_scoped`` database role with
+        ``app.person_id`` set, so PostgreSQL row-level security decides which cases, members and
+        documents exist for that person. Without it the transaction runs with the service's own
+        rights, for platform work that is not done on a person's behalf.
         """
         async with self._sessions() as session, session.begin():
             if person_id is not None:
                 await session.execute(
                     text("select set_config('app.person_id', :p, true)"), {"p": person_id}
                 )
+                await session.execute(text(f"set local role {SCOPED_ROLE}"))
             yield session
 
     async def dispose(self) -> None:
