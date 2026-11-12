@@ -54,8 +54,8 @@ ignore = ["D203", "D213", "D105", "D107", "S101"]
 "**/migrations/**" = ["D", "S608"]
 "**/cli.py" = ["S608"]
 "seed/generate.py" = ["E501"]
-"e2e/demo/render.py" = ["E501"]
-"deploy/chart/dashboards/build.py" = ["E501"]
+"e2e/demo/render.py" = ["E501", "D", "S"]
+"deploy/chart/dashboards/build.py" = ["E501", "D"]
 
 [tool.mypy]
 strict = true

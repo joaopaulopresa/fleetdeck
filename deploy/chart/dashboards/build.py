@@ -1,4 +1,6 @@
-"""Generate the Grafana dashboards. Run after changing a panel: python build.py
+"""Generate the Grafana dashboards.
+
+Run after changing a panel: python build.py
 
 The JSON files next to this script are what Grafana loads; they are committed.
 """
