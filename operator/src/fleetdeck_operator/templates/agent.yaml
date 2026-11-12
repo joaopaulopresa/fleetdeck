@@ -111,6 +111,9 @@ spec:
       serviceAccountName: agent
       automountServiceAccountToken: false
       enableServiceLinks: false
+      # The pause container becomes PID 1 and reaps orphaned children; the image's own init
+      # only works as root.
+      shareProcessNamespace: true
       terminationGracePeriodSeconds: ${TERMINATION_GRACE}
       securityContext:
         runAsNonRoot: true
@@ -137,8 +140,8 @@ spec:
         - name: hermes
           image: ${HERMES_IMAGE}
           imagePullPolicy: IfNotPresent
-          # The lean start measured in the spike: no root bootstrap, tini as init.
-          command: [/usr/bin/tini, --, hermes, gateway, run, --no-supervise, --external-supervisor]
+          # The lean start measured in the spike: no root bootstrap, Hermes runs directly.
+          command: [hermes, gateway, run, --no-supervise, --external-supervisor]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities: {drop: [ALL]}
