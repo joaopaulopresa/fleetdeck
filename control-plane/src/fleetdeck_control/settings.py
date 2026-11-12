@@ -25,6 +25,8 @@ class Settings(CommonSettings):
     scheduler_interval_seconds: int = 10
     background_tasks: bool = True
     web_origin: str = ""
+    #: Prefix of a Langfuse trace link; the trace id is appended. Empty when tracing is off.
+    langfuse_trace_url: str = ""
 
 
 @lru_cache

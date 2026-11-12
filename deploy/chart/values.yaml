@@ -38,3 +38,20 @@ egress:
   allowedHosts:
     - www.cms.gov
     - www.irs.gov
+
+langfuse:
+  enabled: true
+  # *.localhost resolves to this machine in every browser; Traefik routes by host name.
+  host: langfuse.localhost
+  publicUrl: http://langfuse.localhost:8090
+  projectId: fleetdeck
+  # Local demo sign-in for the Langfuse UI. Change both before exposing the cluster.
+  adminEmail: admin@meridian-health.example
+  adminPassword: fleetdeck-demo
+  image:
+    web: docker.langfuse.com/langfuse/langfuse:4
+    worker: docker.langfuse.com/langfuse/langfuse-worker:4
+    postgres: postgres:17-alpine
+    clickhouse: clickhouse/clickhouse-server:26.3.62.3
+    redis: redis:7-alpine
+    minio: cgr.dev/chainguard/minio:latest-dev

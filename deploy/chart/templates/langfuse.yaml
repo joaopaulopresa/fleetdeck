@@ -1,0 +1,319 @@
+{{/* Self-hosted Langfuse: web, worker, and its own PostgreSQL, ClickHouse, Redis and object store. */}}
+{{- define "fleetdeck.langfuseEnv" -}}
+- {name: NEXTAUTH_URL, value: {{ .Values.langfuse.publicUrl | quote }}}
+- {name: HOSTNAME, value: 0.0.0.0}
+- {name: TELEMETRY_ENABLED, value: "false"}
+- name: NEXTAUTH_SECRET
+  valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-nextauth-secret}}
+- name: SALT
+  valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-salt}}
+- name: ENCRYPTION_KEY
+  valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-encryption-key}}
+- name: LANGFUSE_DB_PASSWORD
+  valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-db-password}}
+- {name: DATABASE_URL, value: "postgresql://langfuse:$(LANGFUSE_DB_PASSWORD)@langfuse-db:5432/langfuse"}
+- {name: CLICKHOUSE_MIGRATION_URL, value: "clickhouse://langfuse-clickhouse:9000"}
+- {name: CLICKHOUSE_URL, value: "http://langfuse-clickhouse:8123"}
+- {name: CLICKHOUSE_USER, value: clickhouse}
+- name: CLICKHOUSE_PASSWORD
+  valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-clickhouse-password}}
+- {name: CLICKHOUSE_CLUSTER_ENABLED, value: "false"}
+- {name: REDIS_HOST, value: langfuse-redis}
+- {name: REDIS_PORT, value: "6379"}
+- name: REDIS_AUTH
+  valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-redis-password}}
+{{- range $kind := list "EVENT" "MEDIA" }}
+- {name: LANGFUSE_S3_{{ $kind }}_UPLOAD_BUCKET, value: langfuse}
+- {name: LANGFUSE_S3_{{ $kind }}_UPLOAD_REGION, value: auto}
+- {name: LANGFUSE_S3_{{ $kind }}_UPLOAD_ACCESS_KEY_ID, value: langfuse}
+- name: LANGFUSE_S3_{{ $kind }}_UPLOAD_SECRET_ACCESS_KEY
+  valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-minio-password}}
+- {name: LANGFUSE_S3_{{ $kind }}_UPLOAD_ENDPOINT, value: "http://langfuse-minio:9000"}
+- {name: LANGFUSE_S3_{{ $kind }}_UPLOAD_FORCE_PATH_STYLE, value: "true"}
+- {name: LANGFUSE_S3_{{ $kind }}_UPLOAD_PREFIX, value: "{{ lower $kind }}s/"}
+{{- end }}
+{{- end }}
+{{- if .Values.langfuse.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-web
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: langfuse-web}
+  ports: [{port: 3000}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langfuse-web
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: langfuse-web}
+  template:
+    metadata:
+      labels: {app: langfuse-web, fleetdeck.dev/langfuse: "true"}
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: web
+          image: {{ .Values.langfuse.image.web }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- include "fleetdeck.langfuseEnv" . | nindent 12 }}
+            # Creates the organisation, project, API keys and first user on an empty database.
+            - {name: LANGFUSE_INIT_ORG_ID, value: meridian}
+            - {name: LANGFUSE_INIT_ORG_NAME, value: Meridian Health Group}
+            - {name: LANGFUSE_INIT_PROJECT_ID, value: {{ .Values.langfuse.projectId | quote }}}
+            - {name: LANGFUSE_INIT_PROJECT_NAME, value: Fleetdeck}
+            - name: LANGFUSE_INIT_PROJECT_PUBLIC_KEY
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-public-key}}
+            - name: LANGFUSE_INIT_PROJECT_SECRET_KEY
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-secret-key}}
+            - {name: LANGFUSE_INIT_USER_EMAIL, value: {{ .Values.langfuse.adminEmail | quote }}}
+            - {name: LANGFUSE_INIT_USER_NAME, value: Admin}
+            - {name: LANGFUSE_INIT_USER_PASSWORD, value: {{ .Values.langfuse.adminPassword | quote }}}
+          ports: [{containerPort: 3000}]
+          readinessProbe:
+            httpGet: {path: /api/public/health, port: 3000}
+            periodSeconds: 5
+            failureThreshold: 60
+          resources:
+            requests: {cpu: 100m, memory: 512Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langfuse-worker
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: langfuse-worker}
+  template:
+    metadata:
+      labels: {app: langfuse-worker, fleetdeck.dev/langfuse: "true"}
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: worker
+          image: {{ .Values.langfuse.image.worker }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env: {{- include "fleetdeck.langfuseEnv" . | nindent 12 }}
+          resources:
+            requests: {cpu: 100m, memory: 384Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-db
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: langfuse-db}
+  ports: [{port: 5432}]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: langfuse-db
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  serviceName: langfuse-db
+  replicas: 1
+  selector:
+    matchLabels: {app: langfuse-db}
+  template:
+    metadata:
+      labels: {app: langfuse-db}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {fsGroup: 70}
+      containers:
+        - name: postgres
+          image: {{ .Values.langfuse.image.postgres }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - {name: POSTGRES_USER, value: langfuse}
+            - {name: POSTGRES_DB, value: langfuse}
+            - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+            - name: POSTGRES_PASSWORD
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-db-password}}
+          ports: [{containerPort: 5432}]
+          readinessProbe:
+            exec: {command: [pg_isready, -U, langfuse]}
+            periodSeconds: 3
+          volumeMounts: [{name: data, mountPath: /var/lib/postgresql/data}]
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 2Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-clickhouse
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: langfuse-clickhouse}
+  ports: [{name: http, port: 8123}, {name: native, port: 9000}]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: langfuse-clickhouse
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  serviceName: langfuse-clickhouse
+  replicas: 1
+  selector:
+    matchLabels: {app: langfuse-clickhouse}
+  template:
+    metadata:
+      labels: {app: langfuse-clickhouse}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsUser: 101, runAsGroup: 101, fsGroup: 101}
+      containers:
+        - name: clickhouse
+          image: {{ .Values.langfuse.image.clickhouse }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - {name: CLICKHOUSE_DB, value: default}
+            - {name: CLICKHOUSE_USER, value: clickhouse}
+            - name: CLICKHOUSE_PASSWORD
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-clickhouse-password}}
+          ports: [{containerPort: 8123}, {containerPort: 9000}]
+          readinessProbe:
+            httpGet: {path: /ping, port: 8123}
+            periodSeconds: 3
+          resources:
+            requests: {cpu: 200m, memory: 1Gi}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/clickhouse}
+            - {name: logs, mountPath: /var/log/clickhouse-server}
+      volumes: [{name: logs, emptyDir: {}}]
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 5Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-redis
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: langfuse-redis}
+  ports: [{port: 6379}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langfuse-redis
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: langfuse-redis}
+  template:
+    metadata:
+      labels: {app: langfuse-redis}
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: redis
+          image: {{ .Values.langfuse.image.redis }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [sh, -c, 'exec redis-server --requirepass "$REDIS_AUTH" --maxmemory-policy noeviction']
+          env:
+            - name: REDIS_AUTH
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-redis-password}}
+          ports: [{containerPort: 6379}]
+          readinessProbe:
+            tcpSocket: {port: 6379}
+            periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-minio
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: langfuse-minio}
+  ports: [{port: 9000}]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: langfuse-minio
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  serviceName: langfuse-minio
+  replicas: 1
+  selector:
+    matchLabels: {app: langfuse-minio}
+  template:
+    metadata:
+      labels: {app: langfuse-minio}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {fsGroup: 65532}
+      containers:
+        - name: minio
+          image: {{ .Values.langfuse.image.minio }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [sh, -c, 'mkdir -p /data/langfuse && exec minio server --address ":9000" /data']
+          env:
+            - {name: MINIO_ROOT_USER, value: langfuse}
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-minio-password}}
+          ports: [{containerPort: 9000}]
+          readinessProbe:
+            httpGet: {path: /minio/health/ready, port: 9000}
+            periodSeconds: 3
+          volumeMounts: [{name: data, mountPath: /data}]
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 2Gi}}
+---
+# Traces hold prompts and answers: only the Langfuse pods reach its stores, and only the
+# platform services that send traces (and the ingress) reach Langfuse.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: langfuse-stores
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: app, operator: In, values: [langfuse-db, langfuse-clickhouse, langfuse-redis, langfuse-minio]}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {fleetdeck.dev/langfuse: "true"}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: langfuse
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: {{ .Values.langfuse.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: langfuse-web
+                port: {number: 3000}
+{{- end }}

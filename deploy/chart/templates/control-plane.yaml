@@ -8,6 +8,10 @@
 - name: FLEET_SESSION_SECRET
   valueFrom:
     secretKeyRef: {name: fleet-secrets, key: session-secret}
+{{- if .Values.langfuse.enabled }}
+- name: FLEET_LANGFUSE_TRACE_URL
+  value: "{{ .Values.langfuse.publicUrl }}/project/{{ .Values.langfuse.projectId }}/traces/"
+{{- end }}
 - name: FLEET_IDLE_SECONDS
   value: {{ .Values.agents.idleSeconds | quote }}
 - name: FLEET_WAKE_TIMEOUT_SECONDS

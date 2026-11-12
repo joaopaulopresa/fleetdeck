@@ -51,6 +51,13 @@ spec:
                 secretKeyRef: {name: provider-key, key: OPENROUTER_API_KEY}
             - {name: FLEET_DEFAULT_MODEL, value: {{ .Values.models.default | quote }}}
             - {name: FLEET_RESTRICTED_MODEL, value: {{ .Values.models.restricted | quote }}}
+            {{- if .Values.langfuse.enabled }}
+            - {name: FLEET_LANGFUSE_HOST, value: "http://langfuse-web:3000"}
+            - name: FLEET_LANGFUSE_PUBLIC_KEY
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-public-key}}
+            - name: FLEET_LANGFUSE_SECRET_KEY
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: langfuse-secret-key}}
+            {{- end }}
           ports: [{containerPort: 4000}]
           readinessProbe:
             httpGet: {path: /healthz, port: 4000}

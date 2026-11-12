@@ -164,9 +164,12 @@ async def test_restricted_route_can_point_at_an_in_house_endpoint() -> None:
             upstream=httpx.AsyncClient(),
             tracer=harness_tracer,
         )
-        async with app.router.lifespan_context(app), httpx.AsyncClient(
-            transport=httpx.ASGITransport(app=app), base_url="http://gw"
-        ) as client:
+        async with (
+            app.router.lifespan_context(app),
+            httpx.AsyncClient(
+                transport=httpx.ASGITransport(app=app), base_url="http://gw"
+            ) as client,
+        ):
             harness = Harness(router, client, harness_tracer)
             harness.identity(data_class="restricted")
             inhouse = router.post("http://llm.internal/v1/chat/completions").respond(

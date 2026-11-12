@@ -9,8 +9,10 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- $existing := lookup "v1" "Secret" .root.Release.Namespace "fleet-secrets" -}}
 {{- if and $existing (hasKey $existing.data .key) -}}
 {{ index $existing.data .key }}
+{{- else if .hex -}}
+{{ randAlphaNum 40 | sha256sum | b64enc }}
 {{- else -}}
-{{ randAlphaNum 40 | b64enc }}
+{{ printf "%s%s" (default "" .prefix) (randAlphaNum 40) | b64enc }}
 {{- end -}}
 {{- end }}
 
