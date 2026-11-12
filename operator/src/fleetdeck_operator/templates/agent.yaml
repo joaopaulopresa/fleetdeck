@@ -122,14 +122,20 @@ spec:
         fsGroup: 10000
         seccompProfile: {type: RuntimeDefault}
       initContainers:
-        # Puts the rendered config and brief on the state volume before Hermes starts.
+        # Puts the rendered config and brief on the state volume before Hermes starts, and keeps
+        # Hermes's own bundled skills out: an agent has the skills of its role bundle only,
+        # mounted read-only from the config map.
         - name: config
           image: ${HERMES_IMAGE}
           imagePullPolicy: IfNotPresent
           command:
             - sh
             - -c
-            - cp /bundle/config.yaml /opt/data/config.yaml && cp /bundle/SOUL.md /opt/data/SOUL.md
+            - >-
+              cp /bundle/config.yaml /opt/data/config.yaml &&
+              cp /bundle/SOUL.md /opt/data/SOUL.md &&
+              touch /opt/data/.no-bundled-skills &&
+              rm -rf /opt/data/skills
           securityContext:
             allowPrivilegeEscalation: false
             capabilities: {drop: [ALL]}

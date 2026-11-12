@@ -126,6 +126,7 @@ def test_keys_are_in_the_secret_and_never_in_the_config_map() -> None:
     assert config["mcp_servers"]["patient_record"] == {
         "url": "http://connector-patient-record.fleet-system.svc.cluster.local:8000/mcp",
         "headers": {"Authorization": "Bearer ${FLEET_CONNECTOR_TOKEN}"},
+        "tools": {"resources": False, "prompts": False},
     }
 
 

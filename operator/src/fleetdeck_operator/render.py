@@ -55,6 +55,8 @@ def hermes_config(bundle: Bundle, settings: OperatorSettings) -> dict[str, Any]:
             connector_server_name(name): {
                 "url": settings.connector_url_template.format(name=name),
                 "headers": {"Authorization": "Bearer ${FLEET_CONNECTOR_TOKEN}"},
+                # Connectors expose tools only; skip Hermes's resource and prompt wrappers.
+                "tools": {"resources": False, "prompts": False},
             }
             for name in bundle.connectors
         },
