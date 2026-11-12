@@ -1,0 +1,140 @@
+{{/* The synthetic corporate systems and one MCP connector per system. */}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mock-systems
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: mock-systems}
+  ports: [{port: 8000}]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mock-systems
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  serviceName: mock-systems
+  replicas: 1
+  selector:
+    matchLabels: {app: mock-systems}
+  template:
+    metadata:
+      labels: {app: mock-systems}
+      annotations:
+        fleetdeck.dev/image-id: {{ .Values.image.buildId | quote }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- include "fleetdeck.podSecurity" . | nindent 8 }}
+        fsGroup: 10001
+      volumes: [{name: tmp, emptyDir: {}}]
+      containers:
+        - name: mock-systems
+          image: {{ .Values.image.platform }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - uvicorn
+            - fleetdeck_mock.app:create_app
+            - --factory
+            - --host=0.0.0.0
+            - --port=8000
+            - --no-access-log
+          securityContext: {{- include "fleetdeck.containerSecurity" . | nindent 12 }}
+          env:
+            {{- include "fleetdeck.commonEnv" . | nindent 12 }}
+            - {name: FLEET_SEED_DIR, value: /app/seed/data}
+            - {name: FLEET_STATE_FILE, value: /state/systems.json}
+            - {name: FLEET_TODAY, value: {{ .Values.demo.today | quote }}}
+          ports: [{containerPort: 8000}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: 8000}
+            periodSeconds: 2
+          resources:
+            requests: {cpu: 25m, memory: 96Mi}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+            - {name: state, mountPath: /state}
+  volumeClaimTemplates:
+    - metadata: {name: state}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 100Mi}}
+---
+# Only connectors and the control plane talk to the corporate systems.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mock-systems-clients
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels: {app: mock-systems}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {fleetdeck.dev/systems-client: "true"}
+      ports: [{port: 8000, protocol: TCP}]
+{{- range $name := .Values.connectors }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: connector-{{ $name }}
+  labels: {{- include "fleetdeck.labels" $ | nindent 4 }}
+spec:
+  selector: {app: connector-{{ $name }}}
+  ports: [{port: 8000}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connector-{{ $name }}
+  labels: {{- include "fleetdeck.labels" $ | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: connector-{{ $name }}}
+  template:
+    metadata:
+      labels:
+        app: connector-{{ $name }}
+        fleetdeck.dev/connector: {{ $name | quote }}
+        fleetdeck.dev/agent-facing: "true"
+        fleetdeck.dev/systems-client: "true"
+        {{- if eq $name "knowledge" }}
+        fleetdeck.dev/db-client: "true"
+        {{- end }}
+      annotations:
+        fleetdeck.dev/image-id: {{ $.Values.image.buildId | quote }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {{- include "fleetdeck.podSecurity" $ | nindent 8 }}
+      volumes: [{name: tmp, emptyDir: {}}]
+      containers:
+        - name: connector
+          image: {{ $.Values.image.platform }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command: [fleetdeck-connector, {{ $name | quote }}]
+          securityContext: {{- include "fleetdeck.containerSecurity" $ | nindent 12 }}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+          env:
+            {{- include "fleetdeck.commonEnv" $ | nindent 12 }}
+            - {name: FLEET_SYSTEMS_URL, value: "http://mock-systems:8000"}
+            - name: FLEET_PUBLIC_URL
+              value: http://connector-{{ $name }}.{{ $.Release.Namespace }}.svc.cluster.local:8000
+            {{- if eq $name "knowledge" }}
+            # A login that owns nothing: row-level security always applies to it.
+            - name: CONNECTOR_DB_PASSWORD
+              valueFrom: {secretKeyRef: {name: fleet-secrets, key: connector-db-password}}
+            - name: FLEET_SCOPED_DATABASE_URL
+              value: postgresql://fleet_connector:$(CONNECTOR_DB_PASSWORD)@postgres:5432/fleet
+            {{- end }}
+          ports: [{containerPort: 8000}]
+          readinessProbe:
+            tcpSocket: {port: 8000}
+            periodSeconds: 2
+          resources:
+            requests: {cpu: 25m, memory: 96Mi}
+{{- end }}

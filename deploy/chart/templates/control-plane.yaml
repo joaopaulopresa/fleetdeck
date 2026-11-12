@@ -5,6 +5,11 @@
     secretKeyRef: {name: fleet-secrets, key: postgres-password}
 - name: FLEET_DATABASE_URL
   value: postgresql+asyncpg://fleet:$(POSTGRES_PASSWORD)@postgres:5432/fleet
+- name: FLEET_CONNECTOR_DB_PASSWORD
+  valueFrom:
+    secretKeyRef: {name: fleet-secrets, key: connector-db-password}
+- name: FLEET_SYSTEMS_URL
+  value: http://mock-systems:8000
 - name: FLEET_SESSION_SECRET
   valueFrom:
     secretKeyRef: {name: fleet-secrets, key: session-secret}
@@ -91,6 +96,7 @@ spec:
         app: control-plane
         fleetdeck.dev/db-client: "true"
         fleetdeck.dev/calls-agents: "true"
+        fleetdeck.dev/systems-client: "true"
       annotations:
         fleetdeck.dev/image-id: {{ .Values.image.buildId | quote }}
         prometheus.io/scrape: "true"

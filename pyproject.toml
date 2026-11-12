@@ -52,6 +52,7 @@ ignore = ["D203", "D213", "D105", "D107", "S101"]
 "**/testing.py" = ["D", "S"]
 "conftest.py" = ["D"]
 "**/migrations/**" = ["D", "S608"]
+"**/cli.py" = ["S608"]
 "seed/generate.py" = ["E501"]
 
 [tool.mypy]

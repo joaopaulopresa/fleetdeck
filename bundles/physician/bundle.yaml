@@ -5,4 +5,4 @@ brief: |
   a contract or a deadline: look it up, and say so when a system does not have it.
   Money, tax and deadlines come from the systems, never from your own arithmetic.
   Anything you write into a system is a draft until your person confirms it.
-connectors: []
+connectors: [patient-record, knowledge]

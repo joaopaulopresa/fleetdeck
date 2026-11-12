@@ -25,6 +25,8 @@ class Settings(CommonSettings):
     scheduler_interval_seconds: int = 10
     background_tasks: bool = True
     web_origin: str = ""
+    #: Password of the row-level-security login used by the knowledge connector.
+    connector_db_password: str = ""
     #: Base URL of the corporate systems, used to confirm or discard drafts.
     systems_url: str = "http://mock-systems:8000"
     #: Prefix of a Langfuse trace link; the trace id is appended. Empty when tracing is off.

@@ -9,6 +9,8 @@ import uvicorn
 from alembic import command
 from alembic.config import Config
 from fleetdeck_common.logs import configure_logging
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from fleetdeck_control.settings import get_settings
 
@@ -29,6 +31,23 @@ def migrate(database_url: str | None = None) -> None:
     command.upgrade(alembic_config(database_url), "head")
 
 
+async def ensure_connector_login(database_url: str, password: str) -> None:
+    """Create or update ``fleet_connector``: a login that is only a member of ``fleet_scoped``.
+
+    The knowledge connector uses it, so row-level security applies to everything it reads.
+    """
+    engine = create_async_engine(database_url)
+    quoted = password.replace("'", "''")
+    async with engine.begin() as connection:
+        exists = await connection.scalar(
+            text("select 1 from pg_roles where rolname = 'fleet_connector'")
+        )
+        verb = "alter" if exists else "create"
+        await connection.execute(text(f"{verb} role fleet_connector login password '{quoted}'"))
+        await connection.execute(text("grant fleet_scoped to fleet_connector"))
+    await engine.dispose()
+
+
 def main() -> None:
     """Entry point of ``fleetdeck-control``."""
     parser = argparse.ArgumentParser(prog="fleetdeck-control")
@@ -45,6 +64,10 @@ def main() -> None:
     configure_logging(settings.log_level)
     if args.command == "migrate":
         migrate()
+        if settings.connector_db_password:
+            asyncio.run(
+                ensure_connector_login(settings.database_url, settings.connector_db_password)
+            )
     elif args.command == "seed":
         from fleetdeck_control.seed import seed_all
 
