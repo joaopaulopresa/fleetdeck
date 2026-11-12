@@ -11,7 +11,12 @@ NEW = {"agent_id": "elena-park", "person_id": "elena-park", "bundle": "physician
 
 async def test_sign_in_lists_demo_people_and_rejects_unknown(client: httpx.AsyncClient) -> None:
     people = (await client.get("/api/auth/people")).json()
-    assert {p["id"] for p in people} == {"elena-park", "marcus-reyes", "dana-whitfield"}
+    assert {p["id"] for p in people} == {
+        "elena-park",
+        "marcus-reyes",
+        "priya-nair",
+        "dana-whitfield",
+    }
     assert (await client.post("/api/auth/login", json={"person_id": "nobody"})).status_code == 404
     assert (await client.get("/api/me")).status_code == 401
 

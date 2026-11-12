@@ -35,6 +35,15 @@ PEOPLE = [
         is_admin=False,
     ),
     Person(
+        id="priya-nair",
+        name="Priya Nair",
+        email="priya@example.test",
+        title="Litigation Lawyer",
+        role="lawyer",
+        department="Legal",
+        is_admin=False,
+    ),
+    Person(
         id="dana-whitfield",
         name="Dana Whitfield",
         email="dana@example.test",
@@ -93,6 +102,20 @@ class FakeHermes:
             yield event
 
 
+class FakeConfirmer:
+    """Records which drafts were confirmed or discarded in the corporate systems."""
+
+    def __init__(self) -> None:
+        self.confirmed: list[tuple[str, str, str, str]] = []
+        self.discarded: list[tuple[str, str]] = []
+
+    async def confirm(self, system: str, ref: str, *, person_id: str, body: str) -> None:
+        self.confirmed.append((system, ref, person_id, body))
+
+    async def discard(self, system: str, ref: str, *, person_id: str) -> None:
+        self.discarded.append((system, ref))
+
+
 @pytest.fixture(scope="session")
 def database_url() -> Iterator[str]:
     with PostgresContainer("pgvector/pgvector:pg16", driver="asyncpg") as postgres:
@@ -113,7 +136,9 @@ async def context(database_url: str) -> AsyncIterator[AppContext]:
         internal_token="internal-test-token",
     )
     cluster = FakeAgentCluster()
-    ctx = build_context(settings, cluster=cluster, hermes=FakeHermes(cluster))
+    ctx = build_context(
+        settings, cluster=cluster, hermes=FakeHermes(cluster), confirmer=FakeConfirmer()
+    )
     async with ctx.db.engine.begin() as connection:
         tables = (
             await connection.execute(
