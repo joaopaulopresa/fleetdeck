@@ -26,6 +26,7 @@ class AgentSpec:
     agent_id: str
     display_name: str
     person_id: str | None
+    person_name: str | None
     role: str
     department: str | None
     bundle: str
@@ -85,6 +86,7 @@ def _body(spec: AgentSpec) -> dict[str, Any]:
         "spec": {
             "displayName": spec.display_name,
             "personId": spec.person_id,
+            "personName": spec.person_name,
             "role": spec.role,
             "department": spec.department,
             "bundle": spec.bundle,

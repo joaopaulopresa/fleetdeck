@@ -64,4 +64,4 @@ markers = [
     "cluster: needs a k3d cluster (run with make test-cluster)",
     "live: calls a real model through OpenRouter",
 ]
-addopts = "-m 'not cluster and not live' -q"
+addopts = "-m 'not cluster and not live' -q --import-mode=importlib"

@@ -1,0 +1,170 @@
+# Every agent namespace is rendered from this one file. Placeholders are filled by render.py;
+# the Secret and the ConfigMap (keys, Hermes config, brief, skills) are built there too.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${NAMESPACE}
+  labels:
+    fleetdeck.dev/agent-id: ${AGENT_ID}
+    pod-security.kubernetes.io/enforce: restricted
+  ownerReferences:
+    - apiVersion: fleetdeck.dev/v1alpha1
+      kind: Agent
+      name: ${AGENT_ID}
+      uid: ${OWNER_UID}
+      controller: true
+      blockOwnerDeletion: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: agent
+  namespace: ${NAMESPACE}
+# No Kubernetes API credentials for the agent, ever.
+automountServiceAccountToken: false
+---
+# Nothing in, nothing out, unless a policy below says so.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: ${NAMESPACE}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: platform-only
+  namespace: ${NAMESPACE}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    # Only the control plane may call the agent's API.
+    - from:
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: "${SYSTEM_NAMESPACE}"}
+          podSelector:
+            matchLabels: {fleetdeck.dev/calls-agents: "true"}
+      ports:
+        - {port: ${HERMES_PORT}, protocol: TCP}
+  egress:
+    # Only the services meant for agents: model gateway, connectors, egress proxy.
+    - to:
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: "${SYSTEM_NAMESPACE}"}
+          podSelector:
+            matchLabels: {fleetdeck.dev/agent-facing: "true"}
+    - to:
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: kube-system}
+          podSelector:
+            matchLabels: {k8s-app: kube-dns}
+      ports:
+        - {port: 53, protocol: UDP}
+        - {port: 53, protocol: TCP}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: state
+  namespace: ${NAMESPACE}
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: ${STATE_STORAGE}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hermes
+  namespace: ${NAMESPACE}
+spec:
+  selector: {app: hermes}
+  ports:
+    - {port: ${HERMES_PORT}, targetPort: ${HERMES_PORT}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes
+  namespace: ${NAMESPACE}
+  labels:
+    fleetdeck.dev/agent-id: ${AGENT_ID}
+spec:
+  # 0 while the agent sleeps, 1 while it is awake. State stays on the volume.
+  replicas: ${REPLICAS}
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: hermes}
+  template:
+    metadata:
+      labels:
+        app: hermes
+        fleetdeck.dev/agent-id: ${AGENT_ID}
+      annotations:
+        fleetdeck.dev/config-hash: "${CONFIG_HASH}"
+    spec:
+      serviceAccountName: agent
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      terminationGracePeriodSeconds: ${TERMINATION_GRACE}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
+        seccompProfile: {type: RuntimeDefault}
+      initContainers:
+        # Puts the rendered config and brief on the state volume before Hermes starts.
+        - name: config
+          image: ${HERMES_IMAGE}
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - cp /bundle/config.yaml /opt/data/config.yaml && cp /bundle/SOUL.md /opt/data/SOUL.md
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: state, mountPath: /opt/data}
+            - {name: bundle, mountPath: /bundle, readOnly: true}
+      containers:
+        - name: hermes
+          image: ${HERMES_IMAGE}
+          imagePullPolicy: IfNotPresent
+          # The lean start measured in the spike: no root bootstrap, tini as init.
+          command: [/usr/bin/tini, --, hermes, gateway, run, --no-supervise, --external-supervisor]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          env:
+            - {name: HOME, value: /opt/data}
+            - {name: API_SERVER_ENABLED, value: "true"}
+            - {name: API_SERVER_HOST, value: 0.0.0.0}
+            - {name: API_SERVER_PORT, value: "${HERMES_PORT}"}
+          envFrom:
+            - secretRef: {name: agent-keys}
+          ports:
+            - {containerPort: ${HERMES_PORT}}
+          readinessProbe:
+            httpGet: {path: /health, port: ${HERMES_PORT}}
+            periodSeconds: 1
+            failureThreshold: 180
+          resources:
+            requests: {cpu: ${CPU_REQUEST}, memory: ${MEMORY_REQUEST}}
+            limits: {memory: ${MEMORY_LIMIT}}
+          volumeMounts:
+            - {name: state, mountPath: /opt/data}
+            - {name: bundle, mountPath: /bundle, readOnly: true}
+      volumes:
+        - name: state
+          persistentVolumeClaim: {claimName: state}
+        - name: bundle
+          configMap:
+            name: agent-bundle
+            items: ${BUNDLE_ITEMS}

@@ -36,6 +36,7 @@ def spec_for(agent: Agent, person: Person | None, *, awake: bool) -> AgentSpec:
         agent_id=agent.id,
         display_name=agent.display_name,
         person_id=agent.person_id,
+        person_name=person.name if person else None,
         role=person.role if person else "service",
         department=person.department if person else None,
         bundle=agent.bundle,
