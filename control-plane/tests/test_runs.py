@@ -225,3 +225,38 @@ async def test_model_calls_are_attributed_and_audited_and_restricted_data_sticks
     )
     assert call.trace_id == run.trace_id == event.trace_id
     assert event.person_id == "elena-park" and event.system == "model-gateway"
+
+
+async def test_audit_search_is_for_admins_and_filters(
+    client: httpx.AsyncClient, context: AppContext, admin: dict[str, str]
+) -> None:
+    await _provision(context)
+    await client.post(
+        "/internal/audit",
+        headers=INTERNAL,
+        json={
+            "kind": "egress",
+            "action": "evil.example:443",
+            "outcome": "denied",
+            "agent_id": "elena-park",
+            "system": "egress-proxy",
+            "summary": "Refused outbound connection to evil.example:443",
+        },
+    )
+    elena = await sign_in(client, "elena-park")
+    assert (await client.get("/api/audit", headers=elena)).status_code == 403
+
+    found = (
+        await client.get(
+            "/api/audit",
+            headers=admin,
+            params={"kind": "egress", "outcome": "denied", "agent": "elena-park", "q": "evil"},
+        )
+    ).json()
+    assert found[0]["person_id"] == "elena-park" and found[0]["system"] == "egress-proxy"
+    none = (
+        await client.get(
+            "/api/audit", headers=admin, params={"kind": "egress", "agent": "marcus-reyes"}
+        )
+    ).json()
+    assert none == []
