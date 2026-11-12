@@ -101,7 +101,7 @@ export class Recording {
   /** Send a chat message and wait until the agent has answered. */
   async ask(text: string, label: string): Promise<void> {
     await this.type(this.page.getByLabel("Message to your agent"), text);
-    await this.click(this.page.getByRole("button", { name: "Send" }));
+    await this.click(this.page.getByRole("button", { name: "Send", exact: true }));
     await this.wait(label, async () => {
       await expect(this.page.getByTestId("live-answer")).toBeVisible({ timeout: 30_000 });
       await expect(this.page.getByTestId("live-answer")).toBeHidden({ timeout: 300_000 });

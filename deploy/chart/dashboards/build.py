@@ -1,5 +1,7 @@
 """Generate the Grafana dashboards.
 
+Counts are totals since the services started.
+
 Run after changing a panel: python build.py
 
 The JSON files next to this script are what Grafana loads; they are committed.
@@ -138,7 +140,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Wake-ups",
-                [(f"sum(increase(fleetdeck_agent_wakes_total{WINDOW}))", "")],
+                [("sum(fleetdeck_agent_wakes_total) or vector(0)", "")],
                 12,
                 0,
                 4,
@@ -147,7 +149,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Idle sleeps",
-                [(f"sum(increase(fleetdeck_agent_idle_reaps_total{WINDOW}))", "")],
+                [("sum(fleetdeck_agent_idle_reaps_total) or vector(0)", "")],
                 16,
                 0,
                 4,
@@ -233,7 +235,7 @@ DASHBOARDS = {
                 "Wake-ups by trigger",
                 [
                     (
-                        f"sum by (trigger) (increase(fleetdeck_agent_wakes_total{WINDOW}))",
+                        "sum by (trigger) (fleetdeck_agent_wakes_total)",
                         "{{trigger}}",
                     )
                 ],
@@ -275,7 +277,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Cost",
-                [(f"sum(increase(fleetdeck_model_cost_usd_total{WINDOW}))", "")],
+                [("sum(fleetdeck_model_cost_usd_total) or vector(0)", "")],
                 0,
                 0,
                 6,
@@ -285,7 +287,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Model calls",
-                [(f"sum(increase(fleetdeck_model_calls_total{WINDOW}))", "")],
+                [("sum(fleetdeck_model_calls_total) or vector(0)", "")],
                 6,
                 0,
                 6,
@@ -294,7 +296,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Tokens in",
-                [(f'sum(increase(fleetdeck_model_tokens_total{{direction="input"}}{WINDOW}))', "")],
+                [('sum(fleetdeck_model_tokens_total{direction="input"}) or vector(0)', "")],
                 12,
                 0,
                 6,
@@ -305,7 +307,7 @@ DASHBOARDS = {
                 "Tokens out",
                 [
                     (
-                        f'sum(increase(fleetdeck_model_tokens_total{{direction="output"}}{WINDOW}))',
+                        'sum(fleetdeck_model_tokens_total{direction="output"}) or vector(0)',
                         "",
                     )
                 ],
@@ -319,7 +321,7 @@ DASHBOARDS = {
                 "Cost by person",
                 [
                     (
-                        f"sum by (person) (increase(fleetdeck_model_cost_usd_total{WINDOW}))",
+                        "sum by (person) (fleetdeck_model_cost_usd_total)",
                         "{{person}}",
                     )
                 ],
@@ -334,7 +336,7 @@ DASHBOARDS = {
                 "Cost by department",
                 [
                     (
-                        f"sum by (department) (increase(fleetdeck_model_cost_usd_total{WINDOW}))",
+                        "sum by (department) (fleetdeck_model_cost_usd_total)",
                         "{{department}}",
                     )
                 ],
@@ -360,7 +362,7 @@ DASHBOARDS = {
                 "Calls by data class and route",
                 [
                     (
-                        f"sum by (data_class, route) (increase(fleetdeck_model_calls_total{WINDOW}))",
+                        "sum by (data_class, route) (fleetdeck_model_calls_total)",
                         "{{data_class}} data, {{route}} route",
                     )
                 ],
@@ -394,7 +396,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Requests delivered",
-                [(f'sum(increase(fleetdeck_requests_total{{status="delivered"}}{WINDOW}))', "")],
+                [('sum(fleetdeck_requests_total{status="delivered"}) or vector(0)', "")],
                 0,
                 0,
                 6,
@@ -403,7 +405,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Answered",
-                [(f'sum(increase(fleetdeck_requests_total{{status="answered"}}{WINDOW}))', "")],
+                [('sum(fleetdeck_requests_total{status="answered"}) or vector(0)', "")],
                 6,
                 0,
                 6,
@@ -413,7 +415,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Refused by policy",
-                [(f"sum(increase(fleetdeck_policy_denials_total{WINDOW}))", "")],
+                [("sum(fleetdeck_policy_denials_total) or vector(0)", "")],
                 12,
                 0,
                 6,
@@ -440,7 +442,7 @@ DASHBOARDS = {
                 "Requests by type",
                 [
                     (
-                        f'sum by (type) (increase(fleetdeck_requests_total{{status=~"delivered|denied"}}{WINDOW}))',
+                        'sum by (type) (fleetdeck_requests_total{status=~"delivered|denied"})',
                         "{{type}}",
                     )
                 ],
@@ -452,7 +454,7 @@ DASHBOARDS = {
             panel(
                 "bargauge",
                 "Requests by outcome",
-                [(f"sum by (status) (increase(fleetdeck_requests_total{WINDOW}))", "{{status}}")],
+                [("sum by (status) (fleetdeck_requests_total)", "{{status}}")],
                 12,
                 4,
                 12,
@@ -476,7 +478,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Connector calls refused",
-                [(f"sum(increase(fleetdeck_connector_denials_total{WINDOW}))", "")],
+                [("sum(fleetdeck_connector_denials_total) or vector(0)", "")],
                 0,
                 0,
                 6,
@@ -486,7 +488,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Egress refused",
-                [(f'sum(increase(fleetdeck_egress_total{{outcome!="allowed"}}{WINDOW}))', "")],
+                [('sum(fleetdeck_egress_total{outcome!="allowed"}) or vector(0)', "")],
                 6,
                 0,
                 6,
@@ -496,7 +498,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Requests refused by policy",
-                [(f"sum(increase(fleetdeck_policy_denials_total{WINDOW}))", "")],
+                [("sum(fleetdeck_policy_denials_total) or vector(0)", "")],
                 12,
                 0,
                 6,
@@ -506,7 +508,7 @@ DASHBOARDS = {
             panel(
                 "stat",
                 "Gateway refusals",
-                [(f"sum(increase(fleetdeck_gateway_refused_total{WINDOW}))", "")],
+                [("sum(fleetdeck_gateway_refused_total) or vector(0)", "")],
                 18,
                 0,
                 6,
@@ -519,7 +521,7 @@ DASHBOARDS = {
                 "Refused connector calls by system",
                 [
                     (
-                        f"sum by (system, reason) (increase(fleetdeck_connector_denials_total{WINDOW}))",
+                        "sum by (system, reason) (fleetdeck_connector_denials_total)",
                         "{{system}}: {{reason}}",
                     )
                 ],
@@ -532,7 +534,7 @@ DASHBOARDS = {
             panel(
                 "bargauge",
                 "Egress attempts",
-                [(f"sum by (outcome) (increase(fleetdeck_egress_total{WINDOW}))", "{{outcome}}")],
+                [("sum by (outcome) (fleetdeck_egress_total)", "{{outcome}}")],
                 12,
                 4,
                 12,

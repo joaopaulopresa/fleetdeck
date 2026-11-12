@@ -32,7 +32,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_requests_total{status=\"delivered\"}[$__range]))",
+     "expr": "sum(fleetdeck_requests_total{status=\"delivered\"}) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -78,7 +78,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_requests_total{status=\"answered\"}[$__range]))",
+     "expr": "sum(fleetdeck_requests_total{status=\"answered\"}) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -124,7 +124,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_policy_denials_total[$__range]))",
+     "expr": "sum(fleetdeck_policy_denials_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -216,7 +216,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (type) (increase(fleetdeck_requests_total{status=~\"delivered|denied\"}[$__range]))",
+     "expr": "sum by (type) (fleetdeck_requests_total{status=~\"delivered|denied\"})",
      "legendFormat": "{{type}}",
      "refId": "A"
     }
@@ -261,7 +261,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (status) (increase(fleetdeck_requests_total[$__range]))",
+     "expr": "sum by (status) (fleetdeck_requests_total)",
      "legendFormat": "{{status}}",
      "refId": "A"
     }

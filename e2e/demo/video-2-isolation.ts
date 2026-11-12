@@ -7,27 +7,35 @@ import { Recording } from "./helpers";
 test("video 2: isolation and audit", async ({ page }) => {
   const film = new Recording(page, "video-2-isolation");
   await film.begin();
-  await film.caption("Priya is a litigation lawyer. Her agent has no way into the patient record.", 2600);
+  await film.caption("Priya is a litigation lawyer. Her agent is even wired to the patient-record connector.", 2800);
   await film.become("priya");
   await film.click(page.getByRole("button", { name: "New conversation" }));
+  await film.ask("Use the patient record tools to open the chart of patient PAT-0001 and summarise it.",
+    "Priya's agent calls the patient record");
+  await expect(page.getByTestId("thread")).toContainText(/denied/i);
+  await film.caption("Refused by the connector: the lawyer role has no permission there. The agent does not look for a way around.", 3800);
   await film.ask(
-    "Open the patient record of Harold Whitaker (patient PAT-0001) and summarise his clinical history. "
-    + "If you cannot, ask Dr. Park's agent to send you the chart.",
-    "Priya's agent tries the patient record, then tries to ask the physician's agent");
-  await film.caption("Both routes are closed by the platform: her role has no such tool, and policy forbids the request.", 3600);
+    "Different matter: send Dr. Elena Park's agent an ask_information request about case dn-clm-2026-00672, "
+    + "asking whether she was the treating physician for that claim.",
+    "Priya's agent sends a request to the physician's agent");
+  await expect(page.getByTestId("thread")).toContainText(/denied|refused|policy/i);
+  await film.caption("Refused by the broker: policy does not let Legal question the clinic directly.", 3400);
 
   await film.become("dana");
   await film.open("Audit");
-  await film.caption("Every refusal is in the audit trail, with who tried what.", 2200);
   await page.getByLabel("Outcome").selectOption("denied");
   await page.getByLabel("Person id").fill("priya-nair");
-  await expect(page.getByTestId("audit")).toContainText("was refused");
-  await film.caption("Refused by the connector and by the request policy. Nothing depended on the prompt.", 3200);
-  await film.click(page.getByTestId("audit").getByRole("row").nth(1));
-  await page.waitForTimeout(1800);
+  await expect(page.getByTestId("audit")).toContainText("was refused patient-record");
+  await expect(page.getByTestId("audit")).toContainText("refused: policy");
+  await film.caption("Both refusals are in the audit trail: the connector call and the request.", 3200);
+  await film.click(page.getByTestId("audit").getByRole("row").filter({ hasText: "was refused patient-record" }).first());
+  await film.caption("Decided by role and policy in the platform. Nothing depended on the agent's prompt.", 3200);
 
+  // Prometheus scrapes every ten seconds; give it time to see the new refusals.
+  await film.wait("Waiting for the next metrics scrape", () => page.waitForTimeout(16_000));
   await page.goto("http://grafana.localhost:8090/d/fleetdeck-security/fleetdeck-security?kiosk&from=now-30m&to=now");
   await page.waitForLoadState("networkidle");
-  await film.caption("The same refusals on the security dashboard in Grafana.", 4500);
+  await page.waitForTimeout(1500);
+  await film.caption("The refusals counted on the security dashboard in Grafana.", 4500);
   await film.finish();
 });

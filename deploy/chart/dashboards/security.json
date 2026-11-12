@@ -32,7 +32,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_connector_denials_total[$__range]))",
+     "expr": "sum(fleetdeck_connector_denials_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -78,7 +78,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_egress_total{outcome!=\"allowed\"}[$__range]))",
+     "expr": "sum(fleetdeck_egress_total{outcome!=\"allowed\"}) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -124,7 +124,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_policy_denials_total[$__range]))",
+     "expr": "sum(fleetdeck_policy_denials_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -170,7 +170,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_gateway_refused_total[$__range]))",
+     "expr": "sum(fleetdeck_gateway_refused_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -216,7 +216,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (system, reason) (increase(fleetdeck_connector_denials_total[$__range]))",
+     "expr": "sum by (system, reason) (fleetdeck_connector_denials_total)",
      "legendFormat": "{{system}}: {{reason}}",
      "refId": "A"
     }
@@ -261,7 +261,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (outcome) (increase(fleetdeck_egress_total[$__range]))",
+     "expr": "sum by (outcome) (fleetdeck_egress_total)",
      "legendFormat": "{{outcome}}",
      "refId": "A"
     }

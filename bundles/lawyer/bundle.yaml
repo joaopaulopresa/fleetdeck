@@ -37,9 +37,10 @@ brief: |
      revenue is in formal dispute.
   6. Tell your person the notice waits for their review and that Tax has been notified.
 
-  You never ask the clinic for patient records. What Legal knows about the clinical side is
-  what the dossier contains.
-connectors: [docket, contracts, billing, knowledge, fleet]
+  What Legal knows about the clinical side is what the dossier contains.
+# The patient-record connector is listed on purpose: the lawyer role has no permission for any
+# of its tools, so every call is refused and audited. Being wired to a system grants nothing.
+connectors: [docket, contracts, billing, patient-record, knowledge, fleet]
 skills:
   - name: notice-of-dispute
     description: Checklist for a formal notice of dispute to a payer

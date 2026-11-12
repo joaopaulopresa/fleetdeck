@@ -170,7 +170,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_agent_wakes_total[$__range]))",
+     "expr": "sum(fleetdeck_agent_wakes_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -216,7 +216,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_agent_idle_reaps_total[$__range]))",
+     "expr": "sum(fleetdeck_agent_idle_reaps_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -521,7 +521,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (trigger) (increase(fleetdeck_agent_wakes_total[$__range]))",
+     "expr": "sum by (trigger) (fleetdeck_agent_wakes_total)",
      "legendFormat": "{{trigger}}",
      "refId": "A"
     }

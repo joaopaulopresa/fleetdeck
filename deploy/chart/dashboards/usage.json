@@ -32,7 +32,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_model_cost_usd_total[$__range]))",
+     "expr": "sum(fleetdeck_model_cost_usd_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -78,7 +78,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_model_calls_total[$__range]))",
+     "expr": "sum(fleetdeck_model_calls_total) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -124,7 +124,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_model_tokens_total{direction=\"input\"}[$__range]))",
+     "expr": "sum(fleetdeck_model_tokens_total{direction=\"input\"}) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -170,7 +170,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum(increase(fleetdeck_model_tokens_total{direction=\"output\"}[$__range]))",
+     "expr": "sum(fleetdeck_model_tokens_total{direction=\"output\"}) or vector(0)",
      "legendFormat": "",
      "refId": "A"
     }
@@ -216,7 +216,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (person) (increase(fleetdeck_model_cost_usd_total[$__range]))",
+     "expr": "sum by (person) (fleetdeck_model_cost_usd_total)",
      "legendFormat": "{{person}}",
      "refId": "A"
     }
@@ -261,7 +261,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (department) (increase(fleetdeck_model_cost_usd_total[$__range]))",
+     "expr": "sum by (department) (fleetdeck_model_cost_usd_total)",
      "legendFormat": "{{department}}",
      "refId": "A"
     }
@@ -357,7 +357,7 @@
       "type": "prometheus",
       "uid": "prometheus"
      },
-     "expr": "sum by (data_class, route) (increase(fleetdeck_model_calls_total[$__range]))",
+     "expr": "sum by (data_class, route) (fleetdeck_model_calls_total)",
      "legendFormat": "{{data_class}} data, {{route}} route",
      "refId": "A"
     }

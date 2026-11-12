@@ -16,7 +16,7 @@ test("video 3: scale to zero", async ({ page }) => {
   await film.become("sofia");
   await film.click(page.getByRole("button", { name: "New conversation" }));
   await film.type(page.getByLabel("Message to your agent"), "Which legal matters are open and what is the next deadline?");
-  await film.click(page.getByRole("button", { name: "Send" }));
+  await film.click(page.getByRole("button", { name: "Send", exact: true }));
   await film.caption("Sofia writes to her agent. Its pod starts, with its state from the volume.", 2000);
   await film.wait("The agent wakes and answers from the docket", async () => {
     await expect(page.getByTestId("live-answer")).toBeHidden({ timeout: 300_000 });
