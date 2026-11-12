@@ -1,0 +1,20 @@
+# Which role may send which type of request to which role. Anything not listed is denied.
+# approval: required = the receiving person approves the reply before it leaves.
+#           auto     = the reply is released at once (low-risk request types).
+# grants_membership: delivering the request makes the recipient a member of the case.
+- {request_type: ask_information, from_role: biller, to_role: physician, approval: required,
+   note: "Clinical justification for an appeal. Only the approved summary leaves the clinical area."}
+- {request_type: ask_information, from_role: lawyer, to_role: biller, approval: required,
+   note: "Legal asks Revenue Cycle about a claim in dispute."}
+- {request_type: ask_information, from_role: tax-analyst, to_role: lawyer, approval: required,
+   note: "Tax asks Legal about the status of a dispute."}
+- {request_type: request_review, from_role: biller, to_role: lawyer, approval: required,
+   note: "Review of an appeal or a dossier before it is used."}
+- {request_type: hand_over_task, from_role: biller, to_role: lawyer, approval: required,
+   grants_membership: true, note: "A denied claim becomes a dispute. Legal joins the case."}
+- {request_type: notify, from_role: lawyer, to_role: tax-analyst, approval: auto,
+   grants_membership: true, note: "Revenue is in dispute. Tax joins the case to adjust month-end."}
+- {request_type: notify, from_role: lawyer, to_role: biller, approval: auto,
+   note: "Progress of a dispute."}
+- {request_type: notify, from_role: biller, to_role: director, approval: auto,
+   grants_membership: true, note: "Escalation of a large denial."}

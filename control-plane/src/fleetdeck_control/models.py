@@ -282,3 +282,65 @@ class Approval(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     detail: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
+
+
+REQUEST_TYPES = ("ask_information", "request_review", "hand_over_task", "notify")
+
+
+class RequestPolicy(Base):
+    """Who may send which type of request to whom. No matching row means the request is denied."""
+
+    __tablename__ = "request_policies"
+
+    request_type: Mapped[str] = mapped_column(String(30), primary_key=True)
+    from_role: Mapped[str] = mapped_column(String(40), primary_key=True)
+    to_role: Mapped[str] = mapped_column(String(40), primary_key=True)
+    #: required: the receiving person approves the reply. auto: the reply is released at once.
+    approval: Mapped[str] = mapped_column(String(10), default="required")
+    #: Whether delivering the request makes the recipient a member of the case.
+    grants_membership: Mapped[bool] = mapped_column(Boolean, default=False)
+    note: Mapped[str] = mapped_column(Text, default="")
+
+
+class AgentRequest(Base):
+    """A typed request from one agent to another, about a case."""
+
+    __tablename__ = "requests"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    type: Mapped[str] = mapped_column(String(30))
+    from_agent: Mapped[str] = mapped_column(String(40), index=True)
+    from_person: Mapped[str | None] = mapped_column(String(40), index=True)
+    to_agent: Mapped[str] = mapped_column(String(40), index=True)
+    to_person: Mapped[str | None] = mapped_column(String(40), index=True)
+    case_id: Mapped[str] = mapped_column(String(40), index=True)
+    data_class: Mapped[str] = mapped_column(String(20), default="confidential")
+    subject: Mapped[str] = mapped_column(String(200))
+    body: Mapped[str] = mapped_column(Text)
+    #: denied | delivered | awaiting_approval | answered | declined | failed
+    status: Mapped[str] = mapped_column(String(20), index=True)
+    reason: Mapped[str] = mapped_column(Text, default="")
+    reply_body: Mapped[str | None] = mapped_column(Text)
+    approval: Mapped[str] = mapped_column(String(10), default="required")
+    #: The asking agent's session, where the answer is delivered so the work continues.
+    from_session_id: Mapped[str | None] = mapped_column(String(40))
+    #: The receiving agent's fresh session for this request.
+    handler_session_id: Mapped[str | None] = mapped_column(String(40))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    answered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Schedule(Base):
+    """A recurring job of an agent, run by the central scheduler so the agent can sleep."""
+
+    __tablename__ = "schedules"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    agent_id: Mapped[str] = mapped_column(ForeignKey("agents.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(120))
+    cron: Mapped[str] = mapped_column(String(60))
+    prompt: Mapped[str] = mapped_column(Text)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    next_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_run_id: Mapped[str | None] = mapped_column(String(40))
