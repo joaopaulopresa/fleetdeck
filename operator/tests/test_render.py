@@ -3,7 +3,7 @@ from typing import Any
 
 import pytest
 import yaml
-from fleetdeck_operator.bundles import BRIEF_MAX_CHARS, Bundle, Skill, list_bundles
+from fleetdeck_common.bundles import BRIEF_MAX_CHARS, Bundle, Skill, list_bundles
 from fleetdeck_operator.render import AgentInput, Manifest, phase_for, render_agent
 from fleetdeck_operator.settings import OperatorSettings
 from pydantic import ValidationError

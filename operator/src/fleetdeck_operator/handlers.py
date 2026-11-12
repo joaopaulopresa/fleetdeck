@@ -5,10 +5,10 @@ import logging
 from typing import Any, cast
 
 import kopf
+from fleetdeck_common.bundles import load_bundle
 from fleetdeck_common.logs import configure_logging
 from kubernetes import client, config, dynamic
 
-from fleetdeck_operator.bundles import load_bundle
 from fleetdeck_operator.render import AgentInput, Manifest, phase_for, render_agent
 from fleetdeck_operator.settings import get_settings
 

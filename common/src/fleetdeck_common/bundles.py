@@ -8,8 +8,9 @@ public skills hub.
 from pathlib import Path
 
 import yaml
-from fleetdeck_common.errors import NotFoundError
 from pydantic import BaseModel, Field
+
+from fleetdeck_common.errors import NotFoundError
 
 #: Toolsets no role bundle gets unless it asks: nothing to act with if a prompt injection lands,
 #: and fewer tokens per turn (measured in the spike: 23,600 to 10,500 input tokens).

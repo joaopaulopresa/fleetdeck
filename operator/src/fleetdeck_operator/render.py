@@ -8,9 +8,9 @@ from string import Template
 from typing import Any
 
 import yaml
+from fleetdeck_common.bundles import Bundle
 from fleetdeck_common.naming import namespace_for
 
-from fleetdeck_operator.bundles import Bundle
 from fleetdeck_operator.settings import OperatorSettings
 
 Manifest = dict[str, Any]
