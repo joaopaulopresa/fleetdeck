@@ -3,6 +3,7 @@ SHELL := /bin/bash
 CLUSTER ?= fleetdeck
 NAMESPACE ?= fleet-system
 PLATFORM_IMAGE ?= fleetdeck/platform:dev
+WEB_IMAGE ?= fleetdeck/web:dev
 HERMES_IMAGE ?= nousresearch/hermes-agent:stable
 export KUBECONFIG := $(CURDIR)/.dev-kubeconfig
 
@@ -20,9 +21,10 @@ cluster: ## Create the k3d cluster and load the Hermes image into it
 		|| k3d image import $(HERMES_IMAGE) -c $(CLUSTER)
 	@kubectl wait --for=condition=Ready node --all --timeout=120s
 
-images: ## Build the platform image and load it into the cluster
+images: ## Build the platform and web images and load them into the cluster
 	docker build -q -t $(PLATFORM_IMAGE) .
-	k3d image import $(PLATFORM_IMAGE) -c $(CLUSTER)
+	docker build -q -t $(WEB_IMAGE) web
+	k3d image import $(PLATFORM_IMAGE) $(WEB_IMAGE) -c $(CLUSTER)
 
 up: cluster images deploy ## Create the cluster, build, and install the platform with the demo agents
 
@@ -33,6 +35,7 @@ deploy: ## Install or upgrade the release (reads the model key from .env)
 		--set secrets.openrouterApiKey="$$OPENROUTER_API_KEY" \
 		--set models.default="$$LLM_MODEL" --set models.restricted="$$RESTRICTED_MODEL" \
 		--set image.buildId="$$(docker image inspect --format '{{.Id}}' $(PLATFORM_IMAGE))" \
+		--set image.webBuildId="$$(docker image inspect --format '{{.Id}}' $(WEB_IMAGE))" \
 		--wait --timeout 10m
 	@$(MAKE) --no-print-directory status
 

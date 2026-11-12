@@ -17,6 +17,12 @@
 - name: FLEET_LANGFUSE_TRACE_URL
   value: "{{ .Values.langfuse.publicUrl }}/project/{{ .Values.langfuse.projectId }}/traces/"
 {{- end }}
+{{- if .Values.monitoring.enabled }}
+- {name: FLEET_PROMETHEUS_URL, value: "http://prometheus:9090"}
+- {name: FLEET_GRAFANA_URL, value: {{ .Values.monitoring.grafanaUrl | quote }}}
+{{- end }}
+- {name: FLEET_DEFAULT_MODEL, value: {{ .Values.models.default | quote }}}
+- {name: FLEET_RESTRICTED_MODEL, value: {{ .Values.models.restricted | quote }}}
 - name: FLEET_IDLE_SECONDS
   value: {{ .Values.agents.idleSeconds | quote }}
 - name: FLEET_WAKE_TIMEOUT_SECONDS

@@ -1,10 +1,12 @@
 image:
   platform: fleetdeck/platform:dev
+  web: fleetdeck/web:dev
   hermes: nousresearch/hermes-agent:stable
   postgres: pgvector/pgvector:pg16
   pullPolicy: IfNotPresent
   # Set by `make up` to the built image's id so that pods roll when the code changes.
   buildId: ""
+  webBuildId: ""
 
 # Namespace that holds only the agents' keys. The control plane writes them, the operator reads
 # them, and nothing else is stored there: the control plane cannot read the provider key.
@@ -63,3 +65,13 @@ demo:
   # The corporate systems' "today", so that deadlines and periods match the recorded demo.
   # Set it to "" to use the real date.
   today: "2026-11-12"
+
+monitoring:
+  enabled: true
+  grafanaHost: grafana.localhost
+  grafanaUrl: http://grafana.localhost:8090
+  # Grafana is open to read without sign-in in the local demo; this is the admin password.
+  grafanaAdminPassword: fleetdeck-demo
+  image:
+    prometheus: prom/prometheus:v3.7.3
+    grafana: grafana/grafana:12.2.1
