@@ -17,7 +17,7 @@ MEDIA = E2E.parent / "docs" / "media"
 
 
 def run(*args: str) -> None:
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", *args], check=True)  # noqa: S603, S607
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", *args], check=True)
 
 
 def render(segments_file: Path) -> None:
