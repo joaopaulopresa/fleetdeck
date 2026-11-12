@@ -31,3 +31,10 @@ postgres:
 
 seed:
   enabled: true
+
+egress:
+  # Hosts agents may reach through the egress proxy (HTTPS only). A leading dot allows
+  # subdomains. Everything else is refused and audited.
+  allowedHosts:
+    - www.cms.gov
+    - www.irs.gov
