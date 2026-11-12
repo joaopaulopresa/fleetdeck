@@ -88,6 +88,7 @@ spec:
         fleetdeck.dev/db-client: "true"
         fleetdeck.dev/calls-agents: "true"
       annotations:
+        fleetdeck.dev/image-id: {{ .Values.image.buildId | quote }}
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
     spec:
@@ -143,7 +144,7 @@ spec:
         - name: seed
           image: {{ .Values.image.platform }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: [fleetdeck-control, seed, --path, /app/seed]
+          command: [sh, -c, "fleetdeck-control migrate && fleetdeck-control seed --path /app/seed"]
           securityContext: {{- include "fleetdeck.containerSecurity" . | nindent 12 }}
           volumeMounts: [{name: tmp, mountPath: /tmp}]
           env: {{- include "fleetdeck.controlPlaneEnv" . | nindent 12 }}

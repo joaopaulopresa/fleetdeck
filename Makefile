@@ -7,7 +7,7 @@ HERMES_IMAGE ?= nousresearch/hermes-agent:stable
 export KUBECONFIG := $(CURDIR)/.dev-kubeconfig
 
 .DEFAULT_GOAL := help
-.PHONY: help cluster images up down status lint typecheck test test-cluster
+.PHONY: help cluster images up deploy down status lint typecheck test test-cluster
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  %-14s %s\n", $$1, $$2}'
@@ -24,15 +24,16 @@ images: ## Build the platform image and load it into the cluster
 	docker build -q -t $(PLATFORM_IMAGE) .
 	k3d image import $(PLATFORM_IMAGE) -c $(CLUSTER)
 
-up: cluster images ## Install the platform and the demo agents (reads the model key from .env)
+up: cluster images deploy ## Create the cluster, build, and install the platform with the demo agents
+
+deploy: ## Install or upgrade the release (reads the model key from .env)
 	@test -f .env || { echo "copy .env.example to .env and set OPENROUTER_API_KEY"; exit 1; }
 	@set -a; . ./.env; set +a; \
 	helm upgrade --install fleetdeck deploy/chart --namespace $(NAMESPACE) --create-namespace \
 		--set secrets.openrouterApiKey="$$OPENROUTER_API_KEY" \
 		--set models.default="$$LLM_MODEL" --set models.restricted="$$RESTRICTED_MODEL" \
+		--set image.buildId="$$(docker image inspect --format '{{.Id}}' $(PLATFORM_IMAGE))" \
 		--wait --timeout 10m
-	@kubectl -n $(NAMESPACE) rollout restart deployment >/dev/null
-	@kubectl -n $(NAMESPACE) rollout status deployment --timeout=300s
 	@$(MAKE) --no-print-directory status
 
 status: ## Show the platform pods and the agents

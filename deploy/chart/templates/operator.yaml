@@ -52,6 +52,8 @@ spec:
   template:
     metadata:
       labels: {app: operator}
+      annotations:
+        fleetdeck.dev/image-id: {{ .Values.image.buildId | quote }}
     spec:
       serviceAccountName: operator
       securityContext: {{- include "fleetdeck.podSecurity" . | nindent 8 }}

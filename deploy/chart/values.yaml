@@ -3,6 +3,8 @@ image:
   hermes: nousresearch/hermes-agent:stable
   postgres: pgvector/pgvector:pg16
   pullPolicy: IfNotPresent
+  # Set by `make up` to the built image's id so that pods roll when the code changes.
+  buildId: ""
 
 # Namespace that holds only the agents' keys. The control plane writes them, the operator reads
 # them, and nothing else is stored there: the control plane cannot read the provider key.

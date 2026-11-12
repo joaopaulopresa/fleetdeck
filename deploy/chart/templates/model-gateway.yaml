@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-gateway
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  selector: {app: model-gateway}
+  ports: [{port: 4000}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-gateway
+  labels: {{- include "fleetdeck.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: model-gateway}
+  template:
+    metadata:
+      labels:
+        app: model-gateway
+        # Agent pods may only talk to pods carrying this label.
+        fleetdeck.dev/agent-facing: "true"
+      annotations:
+        fleetdeck.dev/image-id: {{ .Values.image.buildId | quote }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "4000"
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {{- include "fleetdeck.podSecurity" . | nindent 8 }}
+      volumes: [{name: tmp, emptyDir: {}}]
+      containers:
+        - name: model-gateway
+          image: {{ .Values.image.platform }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - uvicorn
+            - fleetdeck_gateway.app:create_app
+            - --factory
+            - --host=0.0.0.0
+            - --port=4000
+            - --no-access-log
+          securityContext: {{- include "fleetdeck.containerSecurity" . | nindent 12 }}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+          env:
+            {{- include "fleetdeck.commonEnv" . | nindent 12 }}
+            # The only place the real provider key is mounted.
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef: {name: provider-key, key: OPENROUTER_API_KEY}
+            - {name: FLEET_DEFAULT_MODEL, value: {{ .Values.models.default | quote }}}
+            - {name: FLEET_RESTRICTED_MODEL, value: {{ .Values.models.restricted | quote }}}
+          ports: [{containerPort: 4000}]
+          readinessProbe:
+            httpGet: {path: /healthz, port: 4000}
+            periodSeconds: 2
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
