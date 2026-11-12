@@ -146,3 +146,11 @@ details.rowdetail > summary { cursor: pointer; color: var(--accent-ink); }
   main { padding: 20px 16px 40px; }
   .chat, .grid2 { grid-template-columns: 1fr; }
 }
+
+/* Tables: keep figures, headers and row actions on one line. */
+th, td.num { white-space: nowrap; }
+td.actions { white-space: nowrap; }
+td.actions, td .actions { flex-wrap: nowrap; }
+td button { padding: 4px 10px; font-size: 0.9rem; }
+td.actions { display: table-cell; }
+td.actions > * + * { margin-left: 6px; }
