@@ -7,7 +7,7 @@ HERMES_IMAGE ?= nousresearch/hermes-agent:stable
 export KUBECONFIG := $(CURDIR)/.dev-kubeconfig
 
 .DEFAULT_GOAL := help
-.PHONY: help cluster images up deploy down status lint typecheck test test-cluster
+.PHONY: help cluster images up deploy down status lint typecheck test test-cluster test-live
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  %-14s %s\n", $$1, $$2}'
@@ -55,5 +55,8 @@ typecheck: ## mypy --strict
 test: ## Unit and API tests (need Docker for a throwaway PostgreSQL, no cluster, no model key)
 	uv run pytest
 
-test-cluster: ## Isolation and scale-to-zero tests against the running k3d cluster
-	uv run pytest -m cluster tests/cluster
+test-cluster: ## Isolation and scale-to-zero tests against the running k3d cluster (no model calls)
+	uv run pytest -m "cluster and not live" tests/cluster
+
+test-live: ## Cluster tests that call a real model through OpenRouter (costs a fraction of a cent)
+	uv run pytest -m live tests/cluster
